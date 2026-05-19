@@ -61,6 +61,32 @@ input:focus,select:focus,textarea:focus{outline:3px solid rgba(37,99,235,.18);bo
   .report h2{font-size:18pt}.report th,.report td{font-size:10pt;padding:5px}
   img{max-width:100%;page-break-inside:avoid}.page-break{page-break-before:always}
 }
+
+/* === v23 responsive stabilization for all screens === */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body,button,input,select,textarea{overflow-wrap:anywhere;word-break:normal}
+header{padding-left:max(10px,env(safe-area-inset-left));padding-right:max(10px,env(safe-area-inset-right))}
+h1{font-size:clamp(16px,4.8vw,22px);overflow-wrap:anywhere;hyphens:auto}
+h2{font-size:clamp(17px,4.4vw,21px)}h3{font-size:clamp(15px,4vw,18px)}
+nav{scrollbar-width:thin;-webkit-overflow-scrolling:touch}nav button{flex:0 0 auto;max-width:78vw;overflow:hidden;text-overflow:ellipsis}
+main{width:100%;padding-left:max(10px,env(safe-area-inset-left));padding-right:max(10px,env(safe-area-inset-right))}
+.card,.item,.report{max-width:100%;overflow:hidden}.card>*,.item>*,.report>*{max-width:100%}
+.actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,168px),1fr));gap:8px}
+.actions .btn,.actions button,.actions label.btn{width:100%;justify-content:center;text-align:center;white-space:normal;line-height:1.18}
+button,.btn{white-space:normal;line-height:1.18;touch-action:manipulation}
+.kpi{grid-template-columns:repeat(auto-fit,minmax(128px,1fr))}.kpi .box{min-width:0}.kpi .num{font-size:clamp(16px,5vw,24px);overflow-wrap:anywhere}.kpi .cap{overflow-wrap:anywhere}
+.stepper{grid-template-columns:repeat(auto-fit,minmax(128px,1fr))}.step{min-width:0;overflow-wrap:anywhere;word-break:normal}
+.grid{grid-template-columns:repeat(12,minmax(0,1fr))}.row{min-width:0}.row>*{min-width:0}.pill{white-space:normal;line-height:1.2;max-width:100%}
+.choice-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}.choice{min-width:0;overflow-wrap:anywhere;line-height:1.25}
+input,select,textarea{min-width:0;max-width:100%}select{text-overflow:ellipsis}
+.photo-preview img{width:clamp(72px,22vw,96px);height:clamp(72px,22vw,96px)}
+.report{overflow-x:auto;-webkit-overflow-scrolling:touch}.report table,.report-table{min-width:720px}div[style*="overflow:auto"]{-webkit-overflow-scrolling:touch;max-width:100%}
+.footerbar .inner{align-items:stretch}.footerbar .summary{flex:1 1 auto;min-width:0;overflow-wrap:anywhere;line-height:1.25}.footerbar button{flex:0 0 auto;max-width:42vw}
+@media(max-width:480px){body{padding-bottom:106px}header{padding-top:10px}main{padding-top:8px}.card{margin:9px 0;padding:12px;border-radius:14px}.item{padding:10px;border-radius:14px}label{font-size:12px}input,select,textarea{font-size:16px;padding:11px;border-radius:11px}.actions{grid-template-columns:1fr 1fr}.actions .btn:nth-child(odd):last-child,.actions button:nth-child(odd):last-child{grid-column:span 2}.kpi{grid-template-columns:1fr 1fr;gap:8px}.kpi .box{padding:10px}.stepper{grid-template-columns:1fr 1fr;gap:7px}.step{padding:8px;font-size:12px}.choice-grid{grid-template-columns:1fr}.footerbar .inner{display:grid;grid-template-columns:1fr auto}}
+@media(max-width:360px){.actions{grid-template-columns:1fr}.actions .btn:nth-child(odd):last-child,.actions button:nth-child(odd):last-child{grid-column:auto}.kpi{grid-template-columns:1fr}.stepper{grid-template-columns:1fr}nav button{max-width:86vw}.footerbar .inner{grid-template-columns:1fr}.footerbar button{max-width:100%;width:100%}}
+@media(min-width:761px) and (max-width:1024px){main{max-width:960px}.actions{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}}
+@media print{html,body{width:210mm;min-height:297mm;font-size:10pt}.report{overflow:visible!important}.report table,.report-table{min-width:0!important;width:100%!important;table-layout:fixed}.report th,.report td{word-break:break-word;overflow-wrap:anywhere}.report img{max-height:95mm;object-fit:contain}}
+
 </style>
 </head>
 <body>
@@ -212,8 +238,8 @@ input:focus,select:focus,textarea:focus{outline:3px solid rgba(37,99,235,.18);bo
 
 <script>
 "use strict";
-const STORAGE_KEY = "medorgChecklistV22UserFriendly";
-const VERSION = "v22-user-friendly";
+const STORAGE_KEY = "medorgChecklistV23Responsive";
+const VERSION = "v23-responsive";
 
 const ROUTE = [
   "Входная группа и фасад",
@@ -449,7 +475,33 @@ function collectPhotos(b){const arr=[];Object.entries(b.risks).forEach(([id,r])=
 function buildFacilityReport(show){const f=facility(),fs=facilitySummary(f);const rows=f.buildings.map((b,i)=>{const s=summary(b);return`<tr><td>${i+1}</td><td>${esc(b.name)}</td><td>${esc(b.type||"—")}</td><td>${esc(b.year||"—")}</td><td>${esc(b.area||"—")}</td><td>${s.indexText}</td><td>${s.risks}</td><td>${esc(s.quality)}</td><td>${esc(s.status)}</td><td>${esc(b.statusDraft||"Черновик")}</td></tr>`}).join("");currentReportHtml=`<div class="report"><h2>Сводный отчёт по учреждению</h2><p><b>Учреждение:</b> ${esc(f.name)}<br><b>Муниципалитет:</b> ${esc(f.municipality||"—")}<br><b>Адрес:</b> ${esc(f.address||"—")}<br><b>Дата:</b> ${new Date().toLocaleString("ru-RU")}</p><h3>Сводный управленческий вывод</h3><p><b>Количество зданий:</b> ${f.buildings.length}<br><b>Средневзвешенный индекс по площади:</b> ${fs.indexText}<br><b>Критические признаки риска:</b> ${fs.risks}<br><b>Качество данных:</b> ${fs.quality}<br><b>Общий статус:</b> ${esc(fs.status)}</p><p>${esc(fs.risks>0?"В составе учреждения есть здания с критическими признаками технического и эксплуатационного риска. По таким зданиям требуется внеплановая проверка соответствующих зон или систем.":"Сводный статус учреждения сформирован по средневзвешенному индексу зданий с учётом площади и результатов визуальной оценки.")}</p><h3>Реестр зданий учреждения</h3><table><thead><tr><th>№</th><th>Здание</th><th>Тип</th><th>Год</th><th>Площадь</th><th>Индекс</th><th>Крит. признаки</th><th>Качество</th><th>Статус</th><th>Статус отчёта</th></tr></thead><tbody>${rows}</tbody></table><h3>Ограничения применения</h3><p>Сводный отчёт предназначен для предварительной управленческой приоритизации объектов учреждения. Он не является техническим обследованием и не заменяет заключение специализированной организации по ГОСТ 31937-2024.</p></div>`;if(show){document.getElementById("reportSection").innerHTML=currentReportHtml;document.getElementById("reportSection").classList.remove("hidden");showTab("reports");}return currentReportHtml;}
 
 function renderMethod(){document.getElementById("methodBlocks").innerHTML=`<table style="width:100%;border-collapse:collapse"><thead><tr><th>№</th><th>Блок</th><th>Вес</th></tr></thead><tbody>${BLOCKS.map((b,i)=>`<tr><td>${i+1}</td><td>${esc(b.title)}</td><td>${b.weight}</td></tr>`).join("")}</tbody></table>`;}
-function downloadCurrentReportHtml(){if(!currentReportHtml)buildBuildingReport(false);downloadBlob(`<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Отчёт</title><style>body{font-family:Arial,sans-serif;padding:24px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:6px;vertical-align:top}th{background:#f1f5f9}img{max-width:100%}.page-break{page-break-before:always}</style></head><body>${currentReportHtml}</body></html>`,"otchet_visualnaya_samoocenka.html","text/html;charset=utf-8");}
+function downloadCurrentReportHtml(){if(!currentReportHtml)buildBuildingReport(false);downloadBlob(`<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>Отчёт</title><style>body{font-family:Arial,sans-serif;padding:24px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:6px;vertical-align:top}th{background:#f1f5f9}img{max-width:100%}.page-break{page-break-before:always}
+/* === v23 responsive stabilization for all screens === */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body,button,input,select,textarea{overflow-wrap:anywhere;word-break:normal}
+header{padding-left:max(10px,env(safe-area-inset-left));padding-right:max(10px,env(safe-area-inset-right))}
+h1{font-size:clamp(16px,4.8vw,22px);overflow-wrap:anywhere;hyphens:auto}
+h2{font-size:clamp(17px,4.4vw,21px)}h3{font-size:clamp(15px,4vw,18px)}
+nav{scrollbar-width:thin;-webkit-overflow-scrolling:touch}nav button{flex:0 0 auto;max-width:78vw;overflow:hidden;text-overflow:ellipsis}
+main{width:100%;padding-left:max(10px,env(safe-area-inset-left));padding-right:max(10px,env(safe-area-inset-right))}
+.card,.item,.report{max-width:100%;overflow:hidden}.card>*,.item>*,.report>*{max-width:100%}
+.actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,168px),1fr));gap:8px}
+.actions .btn,.actions button,.actions label.btn{width:100%;justify-content:center;text-align:center;white-space:normal;line-height:1.18}
+button,.btn{white-space:normal;line-height:1.18;touch-action:manipulation}
+.kpi{grid-template-columns:repeat(auto-fit,minmax(128px,1fr))}.kpi .box{min-width:0}.kpi .num{font-size:clamp(16px,5vw,24px);overflow-wrap:anywhere}.kpi .cap{overflow-wrap:anywhere}
+.stepper{grid-template-columns:repeat(auto-fit,minmax(128px,1fr))}.step{min-width:0;overflow-wrap:anywhere;word-break:normal}
+.grid{grid-template-columns:repeat(12,minmax(0,1fr))}.row{min-width:0}.row>*{min-width:0}.pill{white-space:normal;line-height:1.2;max-width:100%}
+.choice-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}.choice{min-width:0;overflow-wrap:anywhere;line-height:1.25}
+input,select,textarea{min-width:0;max-width:100%}select{text-overflow:ellipsis}
+.photo-preview img{width:clamp(72px,22vw,96px);height:clamp(72px,22vw,96px)}
+.report{overflow-x:auto;-webkit-overflow-scrolling:touch}.report table,.report-table{min-width:720px}div[style*="overflow:auto"]{-webkit-overflow-scrolling:touch;max-width:100%}
+.footerbar .inner{align-items:stretch}.footerbar .summary{flex:1 1 auto;min-width:0;overflow-wrap:anywhere;line-height:1.25}.footerbar button{flex:0 0 auto;max-width:42vw}
+@media(max-width:480px){body{padding-bottom:106px}header{padding-top:10px}main{padding-top:8px}.card{margin:9px 0;padding:12px;border-radius:14px}.item{padding:10px;border-radius:14px}label{font-size:12px}input,select,textarea{font-size:16px;padding:11px;border-radius:11px}.actions{grid-template-columns:1fr 1fr}.actions .btn:nth-child(odd):last-child,.actions button:nth-child(odd):last-child{grid-column:span 2}.kpi{grid-template-columns:1fr 1fr;gap:8px}.kpi .box{padding:10px}.stepper{grid-template-columns:1fr 1fr;gap:7px}.step{padding:8px;font-size:12px}.choice-grid{grid-template-columns:1fr}.footerbar .inner{display:grid;grid-template-columns:1fr auto}}
+@media(max-width:360px){.actions{grid-template-columns:1fr}.actions .btn:nth-child(odd):last-child,.actions button:nth-child(odd):last-child{grid-column:auto}.kpi{grid-template-columns:1fr}.stepper{grid-template-columns:1fr}nav button{max-width:86vw}.footerbar .inner{grid-template-columns:1fr}.footerbar button{max-width:100%;width:100%}}
+@media(min-width:761px) and (max-width:1024px){main{max-width:960px}.actions{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}}
+@media print{html,body{width:210mm;min-height:297mm;font-size:10pt}.report{overflow:visible!important}.report table,.report-table{min-width:0!important;width:100%!important;table-layout:fixed}.report th,.report td{word-break:break-word;overflow-wrap:anywhere}.report img{max-height:95mm;object-fit:contain}}
+
+</style></head><body>${currentReportHtml}</body></html>`,"otchet_visualnaya_samoocenka.html","text/html;charset=utf-8");}
 function downloadBackup(){downloadBlob(JSON.stringify(state,null,2),"medorg_checklist_backup_v22.json","application/json;charset=utf-8");}
 function importBackup(event){const file=event.target.files[0];if(!file)return;const r=new FileReader();r.onload=e=>{try{const data=JSON.parse(e.target.result);if(!data.facilities)throw new Error("Неверный формат");state=data;activeFacilityId=state.activeFacilityId||state.facilities[0].id;activeBuildingId=state.activeBuildingId||state.facilities[0].buildings[0].id;saveState();renderAll();alert("Данные загружены.");}catch(err){alert("Ошибка загрузки JSON: "+err.message)}};r.readAsText(file);}
 function downloadCSV(){const rows=[["ЛПУ","Здание","Адрес","Тип","Год","Площадь","Индекс","Критические признаки","Качество данных","Полнота","Статус","Статус отчёта","Дата обновления"]];state.facilities.forEach(f=>f.buildings.forEach(b=>{const s=summary(b);rows.push([f.name,b.name,b.address||f.address,b.type,b.year,b.area,s.indexText,s.risks,s.quality,s.completeness+"%",s.status,b.statusDraft||"Черновик",b.updatedAt||""])}));downloadBlob("\ufeff"+rows.map(r=>r.map(v=>`"${String(v??"").replace(/"/g,'""')}"`).join(";")).join("\n"),"reestr_visualnaya_samoocenka_v22.csv","text/csv;charset=utf-8");}
