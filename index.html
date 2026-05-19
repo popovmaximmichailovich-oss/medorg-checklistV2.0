@@ -87,6 +87,8 @@ input,select,textarea{min-width:0;max-width:100%}select{text-overflow:ellipsis}
 @media(min-width:761px) and (max-width:1024px){main{max-width:960px}.actions{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}}
 @media print{html,body{width:210mm;min-height:297mm;font-size:10pt}.report{overflow:visible!important}.report table,.report-table{min-width:0!important;width:100%!important;table-layout:fixed}.report th,.report td{word-break:break-word;overflow-wrap:anywhere}.report img{max-height:95mm;object-fit:contain}}
 
+
+.voice-tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}.voice-note{font-size:12px;color:#64748b;margin-top:4px}.voice-active{outline:3px solid rgba(22,163,74,.25)!important;border-color:#16a34a!important}
 </style>
 </head>
 <body>
@@ -151,7 +153,7 @@ input,select,textarea{min-width:0;max-width:100%}select{text-overflow:ellipsis}
       <div class="col-4"><label>Этажность</label><input id="b_floors" type="number" inputmode="numeric" oninput="updateBuildingField('floors',this.value)"></div>
       <div class="col-4"><label>Режим эксплуатации</label><select id="b_mode" onchange="updateBuildingField('mode',this.value)"><option></option><option>Круглосуточная</option><option>Дневная</option><option>Периодическая</option></select></div>
       <div class="col-4"><label>Есть пациенты?</label><select id="b_patients" onchange="updateBuildingField('patients',this.value)"><option></option><option>Да</option><option>Нет</option></select></div>
-      <div class="col-12"><label>Медицинская специфика</label><div class="row" id="medTagsBox"></div></div>
+      
     </div>
   </div>
 
@@ -178,7 +180,7 @@ input,select,textarea{min-width:0;max-width:100%}select{text-overflow:ellipsis}
   </div>
 
   <div id="step6" class="wizardStep card hidden">
-    <h2>6. Медицинская специфика и санитарное состояние</h2>
+    <h2>6. Санитарное состояние помещений</h2>
     <div id="medItems"></div>
   </div>
 
@@ -223,7 +225,7 @@ input,select,textarea{min-width:0;max-width:100%}select{text-overflow:ellipsis}
     <p><b>Расчёт.</b> Формула предварительного индекса износа не является самостоятельной нормативной формулой ГОСТ 31937-2024. Она представляет собой упрощённую управленческую адаптацию принципа средневзвешенной оценки: каждый блок получает визуальный балл, после чего этот балл умножается на установленный вес блока.</p>
     <p><b>Формула:</b> Предварительный индекс износа = Σ (балл блока × вес блока) / 100.</p>
     <p><b>Ограничение.</b> Официальная категория технического состояния здания, строительных конструкций и инженерных систем определяется только по результатам обследования специализированной организацией по ГОСТ 31937-2024.</p>
-    <p><b>Критические признаки риска.</b> При наличии хотя бы одного критического признака технического и эксплуатационного риска итоговый процент предварительного износа не является определяющим.</p>
+    <p><b>Критические признаки риска.</b> При наличии хотя бы одного критического признака технического и эксплуатационного риска итоговый процент предварительного износа не является определяющим.</p><p><b>Голосовой ввод.</b> Голосовая транскрибация является вспомогательной функцией для текстовых полей. Если браузер не поддерживает SpeechRecognition, используйте системную диктовку клавиатуры iPhone или Android.</p>
     <div id="methodBlocks"></div>
   </div>
 </section>
@@ -238,8 +240,8 @@ input,select,textarea{min-width:0;max-width:100%}select{text-overflow:ellipsis}
 
 <script>
 "use strict";
-const STORAGE_KEY = "medorgChecklistV23Responsive";
-const VERSION = "v23-responsive";
+const STORAGE_KEY = "medorgChecklistV24CleanCore";
+const VERSION = "v24-clean-core";
 
 const ROUTE = [
   "Входная группа и фасад",
@@ -252,7 +254,7 @@ const ROUTE = [
   "Пути эвакуации и пожарные выходы"
 ];
 
-const MED_TAGS = ["Операционные", "Реанимация", "КДЛ", "Лучевая диагностика", "Медицинские газы", "Влажный/мокрый режим", "Инфекционный профиль", "Круглосуточное пребывание"];
+const MED_TAGS = [];
 
 const BLOCKS = [
   {id:"foundation", group:"struct", title:"Фундаменты, подвал, цоколь, отмостка", weight:10, choices:[
@@ -335,7 +337,7 @@ const BLOCKS = [
     [80,"Неработающие системы/закрытые выходы в эксплуатируемом здании"],
     [100,"Эксплуатация здания без срочных мер недопустима"]
   ], rec:"Проверить свободность путей эвакуации, выходы, сигнализацию и оповещение."},
-  {id:"medical", group:"med", title:"Санитарно-эпидемиологическое состояние и медицинская специфика", weight:5, choices:[
+  {id:"medical", group:"med", title:"Санитарное состояние помещений и возможность уборки/дезинфекции", weight:5, choices:[
     [0,"Нарушения визуально не выявлены"],
     [20,"Единичные локальные замечания"],
     [40,"Распространённые проблемы отделки/потоков/санитарного режима"],
@@ -470,7 +472,7 @@ function setReportStatus(st){building().statusDraft=st;saveState();recalcAndRend
 function markMissing(){document.querySelectorAll("[data-required]").forEach(el=>el.classList.toggle("required-missing",!String(el.value||"").trim()));document.querySelectorAll("[data-score-required]").forEach(box=>{const id=box.dataset.scoreRequired;const miss=building().scores[id].score==="";box.classList.toggle("required-missing",miss);});}
 function goFirstMissing(){markMissing();const el=document.querySelector(".required-missing");if(el){el.scrollIntoView({behavior:"smooth",block:"center"});const focus=el.matches("input,select,textarea")?el:el.querySelector("input,select,textarea");if(focus)focus.focus({preventScroll:true});}else alert("Обязательные поля заполнены.");}
 
-function buildBuildingReport(show){const f=facility(),b=building(),s=summary(b);const risks=RISKS.map((t,i)=>({t,r:b.risks["r"+i]})).filter(x=>x.r.value==="Да");const scoreRows=BLOCKS.map((bl,i)=>{const sc=b.scores[bl.id], val=sc.score===""?"":Number(sc.score);return`<tr><td>${i+1}</td><td>${esc(bl.title)}</td><td>${bl.weight}</td><td>${sc.score||"—"}</td><td>${val===""?"—":(val*bl.weight/100).toFixed(1)+" %"}</td><td>${esc(sc.zone||"—")}</td><td>${esc(sc.comment||"—")}</td><td>${val===""?"Не заполнено":priority(val,b)}</td></tr>`}).join("");const measures=BLOCKS.map((bl,i)=>{const sc=b.scores[bl.id];if(sc.score===""||Number(sc.score)<20)return"";return`<tr><td>${i+1}</td><td>${esc(bl.title)}</td><td>${sc.score}</td><td>${priority(Number(sc.score),b)}</td><td>${esc(bl.rec)}</td></tr>`}).filter(Boolean).join("")||`<tr><td colspan="5">Мероприятия не сформированы.</td></tr>`;const photos=collectPhotos(b);const photosHtml=photos.length?photos.map(p=>`<div style="display:inline-block;width:48%;vertical-align:top;margin:0 1% 10px 0;page-break-inside:avoid"><img src="${p.data}" style="width:100%;border:1px solid #cbd5e1;border-radius:8px"><div style="font-size:10pt"><b>${esc(p.block)}</b><br>${esc(p.caption||"")}</div></div>`).join(""):"<p>Фото не приложены.</p>";const defects=(b.defects||[]).length?`<table><thead><tr><th>№</th><th>Блок</th><th>Зона</th><th>Приоритет</th><th>Описание</th></tr></thead><tbody>${b.defects.map((d,i)=>`<tr><td>${i+1}</td><td>${esc(d.block||"—")}</td><td>${esc(d.zone||"—")}</td><td>${esc(d.priority||"—")}</td><td>${esc(d.desc||"—")}</td></tr>`).join("")}</tbody></table>`:"<p>Карточки дефектов не добавлены.</p>";currentReportHtml=`<div class="report"><h2>Предварительный отчёт по визуальной самооценке износа здания медицинской организации</h2><p><b>Учреждение:</b> ${esc(f.name)}<br><b>Здание:</b> ${esc(b.name)}<br><b>Адрес:</b> ${esc(b.address||f.address||"—")}<br><b>Дата:</b> ${new Date().toLocaleString("ru-RU")}</p><table><tbody><tr><th>Тип</th><td>${esc(b.type||"—")}</td><th>Год</th><td>${esc(b.year||"—")}</td></tr><tr><th>Площадь</th><td>${esc(b.area||"—")}</td><th>Этажность</th><td>${esc(b.floors||"—")}</td></tr><tr><th>Пациенты</th><td>${esc(b.patients||"—")}</td><th>Режим</th><td>${esc(b.mode||"—")}</td></tr><tr><th>Медицинская специфика</th><td colspan="3">${esc((b.medTags||[]).join(", ")||"Не указана")}</td></tr></tbody></table><h3>Управленческое резюме</h3><p><b>Предварительный индекс износа:</b> ${s.indexText}<br><b>Статус:</b> ${esc(s.status)}<br><b>Критические признаки риска:</b> ${s.risks}<br><b>Качество данных:</b> ${s.quality}<br><b>Полнота заполнения:</b> ${s.completeness}%<br><b>Статус отчёта:</b> ${esc(b.statusDraft||"Черновик")}</p><p>${esc(conclusion(s))}</p><h3>Критические признаки технического и эксплуатационного риска</h3>${risks.length?`<table><thead><tr><th>№</th><th>Признак</th><th>Зона</th><th>Комментарий</th></tr></thead><tbody>${risks.map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x.t)}</td><td>${esc(x.r.zone||"—")}</td><td>${esc(x.r.comment||"—")}</td></tr>`).join("")}</tbody></table>`:"<p>Критические признаки риска не выявлены.</p>"}<h3>Оценка по блокам</h3><table><thead><tr><th>№</th><th>Блок</th><th>Вес</th><th>Балл</th><th>Вклад</th><th>Зона</th><th>Комментарий</th><th>Приоритет</th></tr></thead><tbody>${scoreRows}</tbody></table><h3>Карточки дефектов</h3>${defects}<h3>Перечень рекомендуемых мероприятий</h3><table><thead><tr><th>№</th><th>Блок</th><th>Балл</th><th>Приоритет</th><th>Рекомендация</th></tr></thead><tbody>${measures}</tbody></table><div class="page-break"></div><h3>Фотофиксация</h3>${photosHtml}<h3>Ограничения применения</h3><p>Настоящий отчёт является результатом предварительной визуальной самооценки и не является техническим обследованием здания. Отчёт не устанавливает официальный процент физического износа, не определяет категорию технического состояния здания, строительных конструкций или инженерных систем и не заменяет обследование специализированной организацией по ГОСТ 31937-2024.</p><table><tbody><tr><th>Составил</th><td style="height:42px"></td><th>Подпись</th><td></td></tr><tr><th>Проверил</th><td style="height:42px"></td><th>Подпись</th><td></td></tr></tbody></table></div>`;if(show){document.getElementById("reportSection").innerHTML=currentReportHtml;document.getElementById("reportSection").classList.remove("hidden");showTab("reports");}return currentReportHtml;}
+function buildBuildingReport(show){const f=facility(),b=building(),s=summary(b);const risks=RISKS.map((t,i)=>({t,r:b.risks["r"+i]})).filter(x=>x.r.value==="Да");const scoreRows=BLOCKS.map((bl,i)=>{const sc=b.scores[bl.id], val=sc.score===""?"":Number(sc.score);return`<tr><td>${i+1}</td><td>${esc(bl.title)}</td><td>${bl.weight}</td><td>${sc.score||"—"}</td><td>${val===""?"—":(val*bl.weight/100).toFixed(1)+" %"}</td><td>${esc(sc.zone||"—")}</td><td>${esc(sc.comment||"—")}</td><td>${val===""?"Не заполнено":priority(val,b)}</td></tr>`}).join("");const measures=BLOCKS.map((bl,i)=>{const sc=b.scores[bl.id];if(sc.score===""||Number(sc.score)<20)return"";return`<tr><td>${i+1}</td><td>${esc(bl.title)}</td><td>${sc.score}</td><td>${priority(Number(sc.score),b)}</td><td>${esc(bl.rec)}</td></tr>`}).filter(Boolean).join("")||`<tr><td colspan="5">Мероприятия не сформированы.</td></tr>`;const photos=collectPhotos(b);const photosHtml=photos.length?photos.map(p=>`<div style="display:inline-block;width:48%;vertical-align:top;margin:0 1% 10px 0;page-break-inside:avoid"><img src="${p.data}" style="width:100%;border:1px solid #cbd5e1;border-radius:8px"><div style="font-size:10pt"><b>${esc(p.block)}</b><br>${esc(p.caption||"")}</div></div>`).join(""):"<p>Фото не приложены.</p>";const defects=(b.defects||[]).length?`<table><thead><tr><th>№</th><th>Блок</th><th>Зона</th><th>Приоритет</th><th>Описание</th></tr></thead><tbody>${b.defects.map((d,i)=>`<tr><td>${i+1}</td><td>${esc(d.block||"—")}</td><td>${esc(d.zone||"—")}</td><td>${esc(d.priority||"—")}</td><td>${esc(d.desc||"—")}</td></tr>`).join("")}</tbody></table>`:"<p>Карточки дефектов не добавлены.</p>";currentReportHtml=`<div class="report"><h2>Предварительный отчёт по визуальной самооценке износа здания медицинской организации</h2><p><b>Учреждение:</b> ${esc(f.name)}<br><b>Здание:</b> ${esc(b.name)}<br><b>Адрес:</b> ${esc(b.address||f.address||"—")}<br><b>Дата:</b> ${new Date().toLocaleString("ru-RU")}</p><table><tbody><tr><th>Тип</th><td>${esc(b.type||"—")}</td><th>Год</th><td>${esc(b.year||"—")}</td></tr><tr><th>Площадь</th><td>${esc(b.area||"—")}</td><th>Этажность</th><td>${esc(b.floors||"—")}</td></tr><tr><th>Пациенты</th><td>${esc(b.patients||"—")}</td><th>Режим</th><td>${esc(b.mode||"—")}</td></tr></tbody></table><h3>Управленческое резюме</h3><p><b>Предварительный индекс износа:</b> ${s.indexText}<br><b>Статус:</b> ${esc(s.status)}<br><b>Критические признаки риска:</b> ${s.risks}<br><b>Качество данных:</b> ${s.quality}<br><b>Полнота заполнения:</b> ${s.completeness}%<br><b>Статус отчёта:</b> ${esc(b.statusDraft||"Черновик")}</p><p>${esc(conclusion(s))}</p><h3>Критические признаки технического и эксплуатационного риска</h3>${risks.length?`<table><thead><tr><th>№</th><th>Признак</th><th>Зона</th><th>Комментарий</th></tr></thead><tbody>${risks.map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x.t)}</td><td>${esc(x.r.zone||"—")}</td><td>${esc(x.r.comment||"—")}</td></tr>`).join("")}</tbody></table>`:"<p>Критические признаки риска не выявлены.</p>"}<h3>Оценка по блокам</h3><table><thead><tr><th>№</th><th>Блок</th><th>Вес</th><th>Балл</th><th>Вклад</th><th>Зона</th><th>Комментарий</th><th>Приоритет</th></tr></thead><tbody>${scoreRows}</tbody></table><h3>Карточки дефектов</h3>${defects}<h3>Перечень рекомендуемых мероприятий</h3><table><thead><tr><th>№</th><th>Блок</th><th>Балл</th><th>Приоритет</th><th>Рекомендация</th></tr></thead><tbody>${measures}</tbody></table><div class="page-break"></div><h3>Фотофиксация</h3>${photosHtml}<h3>Ограничения применения</h3><p>Настоящий отчёт является результатом предварительной визуальной самооценки и не является техническим обследованием здания. Отчёт не устанавливает официальный процент физического износа, не определяет категорию технического состояния здания, строительных конструкций или инженерных систем и не заменяет обследование специализированной организацией по ГОСТ 31937-2024.</p><table><tbody><tr><th>Составил</th><td style="height:42px"></td><th>Подпись</th><td></td></tr><tr><th>Проверил</th><td style="height:42px"></td><th>Подпись</th><td></td></tr></tbody></table></div>`;if(show){document.getElementById("reportSection").innerHTML=currentReportHtml;document.getElementById("reportSection").classList.remove("hidden");showTab("reports");}return currentReportHtml;}
 function collectPhotos(b){const arr=[];Object.entries(b.risks).forEach(([id,r])=>(r.photos||[]).forEach(p=>arr.push({data:p.data,block:"Критический признак риска",caption:[r.zone,r.comment].filter(Boolean).join(" · ")})));BLOCKS.forEach(bl=>{const sc=b.scores[bl.id];(sc.photos||[]).forEach(p=>arr.push({data:p.data,block:bl.title,caption:[sc.zone,sc.comment].filter(Boolean).join(" · ")}));});(b.defects||[]).forEach(d=>(d.photos||[]).forEach(p=>arr.push({data:p.data,block:d.block||"Карточка дефекта",caption:[d.zone,d.desc].filter(Boolean).join(" · ")})));return arr;}
 function buildFacilityReport(show){const f=facility(),fs=facilitySummary(f);const rows=f.buildings.map((b,i)=>{const s=summary(b);return`<tr><td>${i+1}</td><td>${esc(b.name)}</td><td>${esc(b.type||"—")}</td><td>${esc(b.year||"—")}</td><td>${esc(b.area||"—")}</td><td>${s.indexText}</td><td>${s.risks}</td><td>${esc(s.quality)}</td><td>${esc(s.status)}</td><td>${esc(b.statusDraft||"Черновик")}</td></tr>`}).join("");currentReportHtml=`<div class="report"><h2>Сводный отчёт по учреждению</h2><p><b>Учреждение:</b> ${esc(f.name)}<br><b>Муниципалитет:</b> ${esc(f.municipality||"—")}<br><b>Адрес:</b> ${esc(f.address||"—")}<br><b>Дата:</b> ${new Date().toLocaleString("ru-RU")}</p><h3>Сводный управленческий вывод</h3><p><b>Количество зданий:</b> ${f.buildings.length}<br><b>Средневзвешенный индекс по площади:</b> ${fs.indexText}<br><b>Критические признаки риска:</b> ${fs.risks}<br><b>Качество данных:</b> ${fs.quality}<br><b>Общий статус:</b> ${esc(fs.status)}</p><p>${esc(fs.risks>0?"В составе учреждения есть здания с критическими признаками технического и эксплуатационного риска. По таким зданиям требуется внеплановая проверка соответствующих зон или систем.":"Сводный статус учреждения сформирован по средневзвешенному индексу зданий с учётом площади и результатов визуальной оценки.")}</p><h3>Реестр зданий учреждения</h3><table><thead><tr><th>№</th><th>Здание</th><th>Тип</th><th>Год</th><th>Площадь</th><th>Индекс</th><th>Крит. признаки</th><th>Качество</th><th>Статус</th><th>Статус отчёта</th></tr></thead><tbody>${rows}</tbody></table><h3>Ограничения применения</h3><p>Сводный отчёт предназначен для предварительной управленческой приоритизации объектов учреждения. Он не является техническим обследованием и не заменяет заключение специализированной организации по ГОСТ 31937-2024.</p></div>`;if(show){document.getElementById("reportSection").innerHTML=currentReportHtml;document.getElementById("reportSection").classList.remove("hidden");showTab("reports");}return currentReportHtml;}
 
@@ -501,6 +503,8 @@ input,select,textarea{min-width:0;max-width:100%}select{text-overflow:ellipsis}
 @media(min-width:761px) and (max-width:1024px){main{max-width:960px}.actions{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}}
 @media print{html,body{width:210mm;min-height:297mm;font-size:10pt}.report{overflow:visible!important}.report table,.report-table{min-width:0!important;width:100%!important;table-layout:fixed}.report th,.report td{word-break:break-word;overflow-wrap:anywhere}.report img{max-height:95mm;object-fit:contain}}
 
+
+.voice-tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}.voice-note{font-size:12px;color:#64748b;margin-top:4px}.voice-active{outline:3px solid rgba(22,163,74,.25)!important;border-color:#16a34a!important}
 </style></head><body>${currentReportHtml}</body></html>`,"otchet_visualnaya_samoocenka.html","text/html;charset=utf-8");}
 function downloadBackup(){downloadBlob(JSON.stringify(state,null,2),"medorg_checklist_backup_v22.json","application/json;charset=utf-8");}
 function importBackup(event){const file=event.target.files[0];if(!file)return;const r=new FileReader();r.onload=e=>{try{const data=JSON.parse(e.target.result);if(!data.facilities)throw new Error("Неверный формат");state=data;activeFacilityId=state.activeFacilityId||state.facilities[0].id;activeBuildingId=state.activeBuildingId||state.facilities[0].buildings[0].id;saveState();renderAll();alert("Данные загружены.");}catch(err){alert("Ошибка загрузки JSON: "+err.message)}};r.readAsText(file);}
@@ -509,6 +513,52 @@ function downloadBlob(content,name,type){const blob=new Blob([content],{type});c
 
 window.addEventListener("DOMContentLoaded",init);
 window.addEventListener("error",e=>{const st=document.getElementById("appStatus");if(st)st.textContent="Ошибка скрипта: "+e.message;});
+
+/* v24 optional voice dictation. Progressive enhancement. */
+let activeVoiceRecognition = null;
+function supportsVoiceInput(){ return !!(window.SpeechRecognition || window.webkitSpeechRecognition); }
+function attachVoiceButtons(){
+  const fields = Array.from(document.querySelectorAll('textarea, input[type="text"], input:not([type])'));
+  fields.forEach(function(el){
+    if(el.dataset.voiceAttached === "1" || el.readOnly || el.disabled) return;
+    el.dataset.voiceAttached = "1";
+    const wrap = document.createElement("div"); wrap.className = "voice-tools no-print";
+    const btn = document.createElement("button"); btn.type="button"; btn.className="btn small"; btn.textContent="Голосовой ввод";
+    btn.onclick = function(){ startVoiceForField(el, btn); };
+    wrap.appendChild(btn);
+    if(!supportsVoiceInput()){
+      const note=document.createElement("div"); note.className="voice-note"; note.textContent="Если кнопка не работает, используйте микрофон системной клавиатуры iPhone/Android."; wrap.appendChild(note);
+    }
+    el.insertAdjacentElement("afterend", wrap);
+  });
+}
+function startVoiceForField(field, btn){
+  if(!supportsVoiceInput()){ alert("В этом браузере встроенная транскрибация недоступна. Используйте микрофон на клавиатуре телефона."); field.focus(); return; }
+  try{
+    if(activeVoiceRecognition){ activeVoiceRecognition.stop(); activeVoiceRecognition=null; }
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const rec = new SR(); activeVoiceRecognition = rec;
+    rec.lang="ru-RU"; rec.interimResults=true; rec.continuous=false;
+    const base = field.value || ""; field.dataset.voiceBase = base;
+    field.classList.add("voice-active"); btn.textContent="Слушаю…";
+    rec.onresult=function(event){
+      let finalText="", interim="";
+      for(let i=event.resultIndex;i<event.results.length;i++){
+        const t=event.results[i][0].transcript;
+        if(event.results[i].isFinal) finalText += t + " "; else interim += t;
+      }
+      field.value = (base + " " + finalText + interim).trim();
+      field.dispatchEvent(new Event("input",{bubbles:true})); field.dispatchEvent(new Event("change",{bubbles:true}));
+    };
+    rec.onerror=function(){ field.classList.remove("voice-active"); btn.textContent="Голосовой ввод"; };
+    rec.onend=function(){ field.classList.remove("voice-active"); btn.textContent="Голосовой ввод"; activeVoiceRecognition=null; };
+    rec.start();
+  }catch(e){ alert("Голосовой ввод не запустился. Используйте диктовку клавиатуры телефона."); }
+}
+const __renderAllBeforeVoice = typeof renderAll === "function" ? renderAll : null;
+if(__renderAllBeforeVoice){ renderAll = function(){ __renderAllBeforeVoice(); setTimeout(attachVoiceButtons, 100); }; }
+window.addEventListener("DOMContentLoaded", function(){ setTimeout(attachVoiceButtons, 300); });
+
 </script>
 </body>
 </html>
