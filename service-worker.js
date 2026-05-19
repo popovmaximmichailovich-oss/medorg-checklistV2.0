@@ -1,6 +1,80 @@
-/* service-worker.js - v24-clean-core */
-const CACHE_NAME="medorg-checklist-v24-clean-core";
-const APP_ASSETS=["./","./index.html","./manifest.webmanifest","./icons/icon-192.png","./icons/icon-512.png"];
-self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(APP_ASSETS)).then(()=>self.skipWaiting()))});
-self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(names=>Promise.all(names.map(n=>n!==CACHE_NAME?caches.delete(n):Promise.resolve()))).then(()=>self.clients.claim()))});
-self.addEventListener("fetch",e=>{const r=e.request;if(r.method!=="GET")return;const u=new URL(r.url);if(u.origin!==self.location.origin)return;if(r.mode==="navigate"||u.pathname.endsWith("/")||u.pathname.endsWith("/index.html")){e.respondWith(fetch(r).then(res=>caches.open(CACHE_NAME).then(c=>{c.put("./index.html",res.clone());return res})).catch(()=>caches.match("./index.html")));return;}if(u.pathname.endsWith("/manifest.webmanifest")){e.respondWith(fetch(r).then(res=>caches.open(CACHE_NAME).then(c=>{c.put(r,res.clone());return res})).catch(()=>caches.match(r)));return;}e.respondWith(caches.match(r).then(cached=>cached||fetch(r).then(res=>caches.open(CACHE_NAME).then(c=>{c.put(r,res.clone());return res}))))});
+/* service-worker.js
+   Чек-лист визуальной самооценки износа здания медицинской организации
+   Версия кэша: v25-clean-stable
+*/
+const CACHE_NAME = "medorg-checklist-v25-clean-stable";
+const APP_ASSETS = [
+  "./",
+  "./index.html",
+  "./manifest.webmanifest",
+  "./icons/icon-192.png",
+  "./icons/icon-512.png"
+];
+
+self.addEventListener("install", function(event) {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(function(cache) { return cache.addAll(APP_ASSETS); })
+      .then(function() { return self.skipWaiting(); })
+  );
+});
+
+self.addEventListener("activate", function(event) {
+  event.waitUntil(
+    caches.keys()
+      .then(function(names) {
+        return Promise.all(names.map(function(name) {
+          if (name !== CACHE_NAME) return caches.delete(name);
+          return Promise.resolve();
+        }));
+      })
+      .then(function() { return self.clients.claim(); })
+  );
+});
+
+self.addEventListener("fetch", function(event) {
+  const request = event.request;
+  if (request.method !== "GET") return;
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return;
+
+  if (request.mode === "navigate" || url.pathname.endsWith("/") || url.pathname.endsWith("/index.html")) {
+    event.respondWith(
+      fetch(request)
+        .then(function(response) {
+          return caches.open(CACHE_NAME).then(function(cache) {
+            cache.put("./index.html", response.clone());
+            return response;
+          });
+        })
+        .catch(function() { return caches.match("./index.html"); })
+    );
+    return;
+  }
+
+  if (url.pathname.endsWith("/manifest.webmanifest")) {
+    event.respondWith(
+      fetch(request)
+        .then(function(response) {
+          return caches.open(CACHE_NAME).then(function(cache) {
+            cache.put(request, response.clone());
+            return response;
+          });
+        })
+        .catch(function() { return caches.match(request); })
+    );
+    return;
+  }
+
+  event.respondWith(
+    caches.match(request).then(function(cached) {
+      if (cached) return cached;
+      return fetch(request).then(function(response) {
+        return caches.open(CACHE_NAME).then(function(cache) {
+          cache.put(request, response.clone());
+          return response;
+        });
+      });
+    })
+  );
+});
