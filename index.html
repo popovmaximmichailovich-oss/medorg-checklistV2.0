@@ -3,501 +3,135 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="app-version" content="v26-rollback-v19-working">
 <title>Чек-лист визуальной самооценки износа здания медицинской организации</title>
-<link rel="manifest" href="manifest.webmanifest">
+<link rel="manifest" href="./manifest.webmanifest">
 <meta name="theme-color" content="#0f172a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Чек-лист износа">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
 <style>
-:root{--bg:#f4f7fb;--card:#fff;--text:#101828;--muted:#667085;--line:#d0d5dd;--accent:#175cd3;--danger:#b42318;--dangerBg:#fff1f3;--warn:#b54708;--ok:#027a48;--okBg:#ecfdf3;--shadow:0 8px 24px rgba(16,24,40,.08);--r:18px}
-*{box-sizing:border-box} html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;font-size:16px;line-height:1.45} body{padding:12px 12px 170px} .wrap{max-width:980px;margin:0 auto} h1{font-size:23px;line-height:1.15;margin:0} h2{font-size:20px;margin:0 0 12px} .head,.section,.resultBox{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px;margin:12px 0} .muted,.small{color:var(--muted);font-size:14px} .grid{display:grid;grid-template-columns:1fr;gap:12px} @media(min-width:720px){.grid.two{grid-template-columns:1fr 1fr}} label{display:flex;flex-direction:column;gap:6px;font-weight:700;font-size:14px} input,select,textarea{width:100%;min-height:52px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;font-size:16px;color:var(--text)} textarea{min-height:84px;resize:vertical} .card{display:block;border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0;background:#fff} .card-title{font-weight:900;margin-bottom:8px} .weight{display:inline-block;margin-left:6px;color:var(--accent);font-size:13px} .missing{border-color:var(--danger)!important;background:var(--dangerBg)!important} .field-missing{border-color:var(--danger)!important;background:var(--dangerBg)!important} .btnbar{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px} button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;appearance:none;border:0;border-radius:14px;min-height:52px;padding:12px 16px;font-weight:900;font-size:16px;background:var(--accent);color:#fff;cursor:pointer} button.secondary{background:#344054} button.light{background:#fff;color:var(--accent);border:1px solid var(--accent)} button.danger{background:var(--danger)} .status{padding:12px;border-radius:14px;background:#f9fafb;border:1px solid var(--line);margin-top:8px} .status.ok{background:var(--okBg);color:var(--ok)} .status.warn{background:#fffaeb;color:var(--warn)} .status.bad{background:#fff1f3;color:var(--danger)} .preview{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px} .preview img{width:78px;height:78px;object-fit:cover;border-radius:12px;border:1px solid var(--line)} #resultIndex{font-size:38px;font-weight:950;color:var(--accent);line-height:1} #resultSummary{font-weight:900} #report{display:none;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:12px 0} #report.visible{display:block} #report table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px} #report th,#report td{border:1px solid #98a2b3;padding:6px;text-align:left;vertical-align:top} #report th{background:#f2f4f7} #report img{max-width:160px;max-height:120px;object-fit:cover;margin:4px;border:1px solid #98a2b3;border-radius:6px} .sticky{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(16,24,40,.12);padding:10px 14px calc(10px + env(safe-area-inset-bottom));z-index:50} .sticky-inner{max-width:980px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center} .sticky-num{font-size:28px;font-weight:950;color:var(--accent)} .print-only{display:none}
-.report-actions{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}.report-cover{border:2px solid #0f172a;border-radius:12px;padding:16px;margin:0 0 14px}.report-title{font-size:24px;font-weight:900;line-height:1.2;margin:0 0 8px}.report-chip{display:inline-block;border-radius:999px;padding:4px 10px;background:#eef4ff;color:#1849a9;font-weight:800;margin:3px 4px 3px 0}.report-conclusion{border-radius:12px;padding:12px;margin:10px 0;border:1px solid #d0d5dd}.report-conclusion.ok{background:#ecfdf3;color:#027a48}.report-conclusion.warn{background:#fffaeb;color:#b54708}.report-conclusion.bad{background:#fff1f3;color:#b42318}.report-photo-grid{display:flex;flex-wrap:wrap;gap:8px}.report-photo-grid img{width:150px;height:110px;object-fit:cover;border:1px solid #98a2b3;border-radius:6px}.signature-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}.signature-box{border-top:1px solid #344054;padding-top:8px;min-height:44px}.page-break{page-break-before:always}.report-meta-table td:first-child{width:32%;font-weight:700;background:#f8fafc}
-
-@media(max-width:420px){body{padding-left:10px;padding-right:10px}h1{font-size:21px}.head,.section,.resultBox{padding:14px;border-radius:16px}button{width:100%}.btnbar{display:grid;grid-template-columns:1fr}.sticky-inner{grid-template-columns:1fr}}
-@media print{body{background:#fff;padding:0}.no-print,.sticky,#checklistForm,.head,.resultBox{display:none!important}#report{display:block!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0!important}.print-only{display:block}.page-break{page-break-before:always}#report table{page-break-inside:auto}#report tr{page-break-inside:avoid;page-break-after:auto}#report img{break-inside:avoid;page-break-inside:avoid}h1,h2,h3{page-break-after:avoid}}
+:root{--bg:#f8fafc;--card:#fff;--text:#0f172a;--muted:#667085;--line:#d0d5dd;--blue:#2563eb;--green:#16a34a;--yellow:#ca8a04;--orange:#ea580c;--red:#dc2626;--gray:#475467;--shadow:0 8px 24px rgba(16,24,40,.08);--r:18px}
+*{box-sizing:border-box} html{-webkit-text-size-adjust:100%;text-size-adjust:100%} body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;font-size:16px;line-height:1.45;padding-bottom:98px} body,button,input,select,textarea{overflow-wrap:anywhere} .wrap{width:100%;max-width:1120px;margin:0 auto;padding:12px max(10px,env(safe-area-inset-left)) 12px max(10px,env(safe-area-inset-right))}
+header{position:sticky;top:0;z-index:30;background:rgba(248,250,252,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)} h1{font-size:clamp(17px,4.6vw,23px);line-height:1.15;margin:0;font-weight:950} h2{font-size:clamp(18px,4.2vw,22px);margin:0 0 12px} h3{font-size:17px;margin:16px 0 10px}.muted{color:var(--muted);font-size:14px}.small{font-size:13px;color:var(--muted)}
+.topbar{display:flex;gap:10px;align-items:center;justify-content:space-between}.menuSelect{min-width:150px;max-width:48vw} nav{display:flex;gap:8px;overflow-x:auto;padding-top:10px;-webkit-overflow-scrolling:touch} nav button{flex:0 0 auto;max-width:80vw}.card,.section,.resultBox{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px;margin:12px 0;max-width:100%;overflow:hidden}.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px}.col12{grid-column:span 12}.col8{grid-column:span 8}.col6{grid-column:span 6}.col4{grid-column:span 4}.col3{grid-column:span 3}@media(max-width:760px){.col8,.col6,.col4,.col3{grid-column:span 12}.wrap{padding-top:10px}.card,.section,.resultBox{padding:13px;border-radius:15px}.topbar{align-items:flex-start}.grid{gap:10px}}
+label{display:flex;flex-direction:column;gap:6px;font-weight:800;font-size:13px;color:#344054} input,select,textarea{width:100%;min-height:50px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;font-size:16px;color:var(--text)} textarea{min-height:86px;resize:vertical} input:focus,select:focus,textarea:focus{outline:3px solid rgba(37,99,235,.18);border-color:var(--blue)}.missing,.field-missing{border-color:var(--red)!important;background:#fff1f3!important;box-shadow:0 0 0 3px rgba(220,38,38,.12)}
+.btnbar,.actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:10px;margin-top:12px} button,.btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent;appearance:none;border:0;border-radius:14px;min-height:50px;padding:11px 14px;font-weight:900;font-size:15px;background:var(--blue);color:#fff;cursor:pointer;text-align:center;white-space:normal;line-height:1.18} button.secondary{background:#344054} button.light{background:#fff;color:var(--blue);border:1px solid var(--blue)} button.danger{background:var(--red)} button.ok{background:var(--green)} button.ghost{background:#fff;color:#344054;border:1px solid var(--line)}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(138px,1fr));gap:10px}.kpi .box{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:12px}.kpi .num{font-size:clamp(17px,5vw,26px);font-weight:950;color:var(--blue);line-height:1.1}.kpi .cap{font-size:12px;color:var(--muted);font-weight:800}.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;font-size:13px;font-weight:900;border:1px solid var(--line);background:#fff;white-space:normal}.pill.green{background:#ecfdf3;color:#027a48;border-color:#abefc6}.pill.yellow{background:#fffaeb;color:#b54708;border-color:#fedf89}.pill.orange{background:#fff6ed;color:#c4320a;border-color:#f9dbaf}.pill.red{background:#fff1f3;color:#b42318;border-color:#fecdca}.pill.gray{background:#f2f4f7;color:#344054}.status{padding:12px;border-radius:14px;background:#f9fafb;border:1px solid var(--line);margin-top:8px}.status.ok{background:#ecfdf3;color:#027a48}.status.warn{background:#fffaeb;color:#b54708}.status.bad{background:#fff1f3;color:#b42318}.status.info{background:#eff6ff;color:#1849a9}
+.stepper{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:10px 0}.step{background:#fff;color:#344054;border:1px solid var(--line);border-radius:14px;padding:10px;font-size:13px;font-weight:900;min-height:44px}.step.active{background:#0f172a;color:#fff;border-color:#0f172a}.step.done{background:#ecfdf3;color:#027a48;border-color:#abefc6}.step.warn{background:#fff6ed;color:#c4320a;border-color:#f9dbaf}.item,.checkCard{display:block;border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0;background:#fff}.item.warn,.checkCard.warn{border-color:#f9dbaf;background:#fff6ed}.item.critical,.checkCard.critical{border-color:#fecdca;background:#fff1f3}.card-title{font-weight:950;margin-bottom:8px}.weight{display:inline-block;color:var(--blue);font-size:13px}.preview{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.preview img{width:clamp(70px,21vw,94px);height:clamp(70px,21vw,94px);object-fit:cover;border-radius:12px;border:1px solid var(--line)}
+.tableWrap{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%} table{border-collapse:collapse;width:100%}.tableWrap table{min-width:720px} th,td{border:1px solid #98a2b3;padding:6px;text-align:left;vertical-align:top}.report{display:none;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:12px 0}.report.visible{display:block}.report table{font-size:13px}.report th{background:#f2f4f7}.report img{max-width:160px;max-height:120px;object-fit:cover;margin:4px;border:1px solid #98a2b3;border-radius:6px}.report-cover{border:2px solid #0f172a;border-radius:12px;padding:16px;margin:0 0 14px}.report-title{font-size:24px;font-weight:900;line-height:1.2;margin:0 0 8px}.report-chip{display:inline-block;border-radius:999px;padding:4px 10px;background:#eef4ff;color:#1849a9;font-weight:800;margin:3px 4px 3px 0}.report-conclusion{border-radius:12px;padding:12px;margin:10px 0;border:1px solid #d0d5dd}.report-conclusion.ok{background:#ecfdf3;color:#027a48}.report-conclusion.warn{background:#fffaeb;color:#b54708}.report-conclusion.bad{background:#fff1f3;color:#b42318}.report-photo-grid{display:flex;flex-wrap:wrap;gap:8px}.report-photo-grid img{width:150px;height:110px;object-fit:cover}.signature-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}.signature-box{border-top:1px solid #344054;padding-top:8px;min-height:44px}.page-break{page-break-before:always}
+.sticky{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(16,24,40,.12);padding:10px 14px calc(10px + env(safe-area-inset-bottom));z-index:50}.sticky-inner{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}.sticky-num{font-size:24px;font-weight:950;color:var(--blue)}.hidden{display:none!important}.print-only{display:none}
+.voice-tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}.voice-note{font-size:12px;color:#667085;margin-top:4px}.voice-active{outline:3px solid rgba(22,163,74,.25)!important;border-color:#16a34a!important}
+@media(max-width:480px){body{padding-bottom:118px}.btnbar,.actions{grid-template-columns:1fr 1fr}.kpi{grid-template-columns:1fr 1fr}.stepper{grid-template-columns:1fr 1fr}.sticky-inner{grid-template-columns:1fr}.sticky button{width:100%}.menuSelect{max-width:58vw}.report-title{font-size:20px}}@media(max-width:360px){.btnbar,.actions,.kpi,.stepper{grid-template-columns:1fr}.topbar{display:block}.menuSelect{max-width:100%;margin-top:10px}}
+@media print{body{background:#fff;padding:0}.no-print,.sticky,#dashboard,#inspect,#method,.head,.resultBox{display:none!important}.wrap{max-width:none;padding:0}.report{display:block!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0;overflow:visible!important}.report table{min-width:0!important;width:100%!important;table-layout:fixed}.report th,.report td{word-break:break-word;overflow-wrap:anywhere}.print-only{display:block}.page-break{page-break-before:always}tr,img{page-break-inside:avoid}h1,h2,h3{page-break-after:avoid}.report img{max-height:95mm}}
 </style>
 </head>
 <body>
-<div class="wrap">
-<header class="head"><h1>Чек-лист визуальной самооценки износа здания медицинской организации</h1><p class="muted">Форма предназначена для предварительной визуальной самооценки. Она не заменяет техническое обследование специализированной организацией.</p></header>
-
-<section class="resultBox no-print"><h2>Расчёт и предварительный вывод</h2><div id="scriptStatus" class="status warn">Запуск расчёта проверяется…</div><div class="grid two"><div><div class="small">Предварительный визуальный индекс</div><div id="resultIndex">—</div></div><div><div class="small">Статус заполнения</div><div id="resultSummary">Заполните баллы в блоке 3.</div><div id="resultConclusion" class="status">Результат появится сразу после выбора баллов.</div></div></div><div class="btnbar"><button id="btnCalc" type="button">Пересчитать</button><button id="btnReport" type="button" class="secondary">Показать комплексный отчёт</button><button id="btnPrint" type="button" class="secondary">Сформировать PDF / печать</button><button id="btnDownload" type="button" class="light">Скачать HTML-отчёт</button><button id="btnShare" type="button" class="light">Поделиться резюме</button><button id="btnClear" type="button" class="danger">Очистить</button></div><p class="muted">Нажмите «Сформировать PDF / печать» → выберите «Сохранить как PDF» или «Поделиться» → сохраните файл либо отправьте его по почте, в мессенджер или другое приложение.</p></section>
-
-<form id="checklistForm" autocomplete="on">
-<section class="section"><h2>1. Общие сведения</h2><div class="grid two"><label>Наименование медицинской организации *<input name="org" data-required="1" type="text"></label><label>Адрес объекта *<input name="address" data-required="1" type="text"></label><label>Корпус / здание<input name="building" type="text"></label><label>Дата осмотра *<input name="date" data-required="1" type="date"></label><label>Ф.И.О. заполнившего *<input name="person" data-required="1" type="text"></label><label>Должность *<input name="role" data-required="1" type="text"></label></div><label>Краткое описание объекта / примечание<textarea name="note"></textarea></label></section>
-
-<section class="section"><h2>2. Критические признаки риска</h2><p class="muted">Если выбран хотя бы один ответ «Да», итоговый вывод автоматически переводится в режим необходимости внепланового обследования.</p><article class="card" data-red-card="1" data-title="Сквозные трещины в несущих стенах, колоннах, ригелях, плитах перекрытия">
-  <div class="card-title">1. Сквозные трещины в несущих стенах, колоннах, ригелях, плитах перекрытия</div>
-  <div class="grid two">
-    <label>Выявлено *<select name="red1" data-red="1" required><option value="">Выберите</option><option value="Нет">Нет</option><option value="Да">Да</option></select></label>
-    <label>Зона / этаж / помещение<input name="redzone1" type="text" autocomplete="off" placeholder="Например: 2 этаж, коридор у процедурной"></label>
-  </div>
-  <label>Комментарий<textarea name="redcomment1" placeholder="Кратко опишите признак"></textarea></label>
-  <div class="grid two">
-    <label>Камера<input name="redcam1" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="red1"></label>
-    <label>Галерея / файлы<input name="redgal1" type="file" accept="image/*" multiple data-photo="1" data-photo-target="red1"></label>
-  </div>
-  <div class="preview" id="preview-red1"></div>
-</article>
-<article class="card" data-red-card="1" data-title="Видимый прогиб перекрытий, балок, лестничных маршей или площадок">
-  <div class="card-title">2. Видимый прогиб перекрытий, балок, лестничных маршей или площадок</div>
-  <div class="grid two">
-    <label>Выявлено *<select name="red2" data-red="1" required><option value="">Выберите</option><option value="Нет">Нет</option><option value="Да">Да</option></select></label>
-    <label>Зона / этаж / помещение<input name="redzone2" type="text" autocomplete="off" placeholder="Например: 2 этаж, коридор у процедурной"></label>
-  </div>
-  <label>Комментарий<textarea name="redcomment2" placeholder="Кратко опишите признак"></textarea></label>
-  <div class="grid two">
-    <label>Камера<input name="redcam2" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="red2"></label>
-    <label>Галерея / файлы<input name="redgal2" type="file" accept="image/*" multiple data-photo="1" data-photo-target="red2"></label>
-  </div>
-  <div class="preview" id="preview-red2"></div>
-</article>
-<article class="card" data-red-card="1" data-title="Просадка пола, деформация отмостки, крен здания, перекос оконных/дверных проёмов">
-  <div class="card-title">3. Просадка пола, деформация отмостки, крен здания, перекос оконных/дверных проёмов</div>
-  <div class="grid two">
-    <label>Выявлено *<select name="red3" data-red="1" required><option value="">Выберите</option><option value="Нет">Нет</option><option value="Да">Да</option></select></label>
-    <label>Зона / этаж / помещение<input name="redzone3" type="text" autocomplete="off" placeholder="Например: 2 этаж, коридор у процедурной"></label>
-  </div>
-  <label>Комментарий<textarea name="redcomment3" placeholder="Кратко опишите признак"></textarea></label>
-  <div class="grid two">
-    <label>Камера<input name="redcam3" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="red3"></label>
-    <label>Галерея / файлы<input name="redgal3" type="file" accept="image/*" multiple data-photo="1" data-photo-target="red3"></label>
-  </div>
-  <div class="preview" id="preview-red3"></div>
-</article>
-<article class="card" data-red-card="1" data-title="Обрушение, выпадение фрагментов фасада, кирпичной кладки, бетона, штукатурки с высоты">
-  <div class="card-title">4. Обрушение, выпадение фрагментов фасада, кирпичной кладки, бетона, штукатурки с высоты</div>
-  <div class="grid two">
-    <label>Выявлено *<select name="red4" data-red="1" required><option value="">Выберите</option><option value="Нет">Нет</option><option value="Да">Да</option></select></label>
-    <label>Зона / этаж / помещение<input name="redzone4" type="text" autocomplete="off" placeholder="Например: 2 этаж, коридор у процедурной"></label>
-  </div>
-  <label>Комментарий<textarea name="redcomment4" placeholder="Кратко опишите признак"></textarea></label>
-  <div class="grid two">
-    <label>Камера<input name="redcam4" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="red4"></label>
-    <label>Галерея / файлы<input name="redgal4" type="file" accept="image/*" multiple data-photo="1" data-photo-target="red4"></label>
-  </div>
-  <div class="preview" id="preview-red4"></div>
-</article>
-<article class="card" data-red-card="1" data-title="Регулярные протечки кровли над электрощитовой, серверной, кислородной, операционной, реанимацией, лабораторией">
-  <div class="card-title">5. Регулярные протечки кровли над электрощитовой, серверной, кислородной, операционной, реанимацией, лабораторией</div>
-  <div class="grid two">
-    <label>Выявлено *<select name="red5" data-red="1" required><option value="">Выберите</option><option value="Нет">Нет</option><option value="Да">Да</option></select></label>
-    <label>Зона / этаж / помещение<input name="redzone5" type="text" autocomplete="off" placeholder="Например: 2 этаж, коридор у процедурной"></label>
-  </div>
-  <label>Комментарий<textarea name="redcomment5" placeholder="Кратко опишите признак"></textarea></label>
-  <div class="grid two">
-    <label>Камера<input name="redcam5" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="red5"></label>
-    <label>Галерея / файлы<input name="redgal5" type="file" accept="image/*" multiple data-photo="1" data-photo-target="red5"></label>
-  </div>
-  <div class="preview" id="preview-red5"></div>
-</article>
-<article class="card" data-red-card="1" data-title="Следы замыкания, оплавления, запах гари, искрение, открытая проводка в зонах пребывания пациентов">
-  <div class="card-title">6. Следы замыкания, оплавления, запах гари, искрение, открытая проводка в зонах пребывания пациентов</div>
-  <div class="grid two">
-    <label>Выявлено *<select name="red6" data-red="1" required><option value="">Выберите</option><option value="Нет">Нет</option><option value="Да">Да</option></select></label>
-    <label>Зона / этаж / помещение<input name="redzone6" type="text" autocomplete="off" placeholder="Например: 2 этаж, коридор у процедурной"></label>
-  </div>
-  <label>Комментарий<textarea name="redcomment6" placeholder="Кратко опишите признак"></textarea></label>
-  <div class="grid two">
-    <label>Камера<input name="redcam6" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="red6"></label>
-    <label>Галерея / файлы<input name="redgal6" type="file" accept="image/*" multiple data-photo="1" data-photo-target="red6"></label>
-  </div>
-  <div class="preview" id="preview-red6"></div>
-</article>
-<article class="card" data-red-card="1" data-title="Неработающая пожарная сигнализация, система оповещения, дымоудаление, противопожарный водопровод при эксплуатации здания">
-  <div class="card-title">7. Неработающая пожарная сигнализация, система оповещения, дымоудаление, противопожарный водопровод при эксплуатации здания</div>
-  <div class="grid two">
-    <label>Выявлено *<select name="red7" data-red="1" required><option value="">Выберите</option><option value="Нет">Нет</option><option value="Да">Да</option></select></label>
-    <label>Зона / этаж / помещение<input name="redzone7" type="text" autocomplete="off" placeholder="Например: 2 этаж, коридор у процедурной"></label>
-  </div>
-  <label>Комментарий<textarea name="redcomment7" placeholder="Кратко опишите признак"></textarea></label>
-  <div class="grid two">
-    <label>Камера<input name="redcam7" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="red7"></label>
-    <label>Галерея / файлы<input name="redgal7" type="file" accept="image/*" multiple data-photo="1" data-photo-target="red7"></label>
-  </div>
-  <div class="preview" id="preview-red7"></div>
-</article>
-<article class="card" data-red-card="1" data-title="Затопление подвала, длительное увлажнение фундаментов, плесень и грибок в помещениях постоянного пребывания людей">
-  <div class="card-title">8. Затопление подвала, длительное увлажнение фундаментов, плесень и грибок в помещениях постоянного пребывания людей</div>
-  <div class="grid two">
-    <label>Выявлено *<select name="red8" data-red="1" required><option value="">Выберите</option><option value="Нет">Нет</option><option value="Да">Да</option></select></label>
-    <label>Зона / этаж / помещение<input name="redzone8" type="text" autocomplete="off" placeholder="Например: 2 этаж, коридор у процедурной"></label>
-  </div>
-  <label>Комментарий<textarea name="redcomment8" placeholder="Кратко опишите признак"></textarea></label>
-  <div class="grid two">
-    <label>Камера<input name="redcam8" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="red8"></label>
-    <label>Галерея / файлы<input name="redgal8" type="file" accept="image/*" multiple data-photo="1" data-photo-target="red8"></label>
-  </div>
-  <div class="preview" id="preview-red8"></div>
-</article>
-<article class="card" data-red-card="1" data-title="Отсутствует нормальная работа отопления, вентиляции, водоснабжения или канализации в лечебных помещениях">
-  <div class="card-title">9. Отсутствует нормальная работа отопления, вентиляции, водоснабжения или канализации в лечебных помещениях</div>
-  <div class="grid two">
-    <label>Выявлено *<select name="red9" data-red="1" required><option value="">Выберите</option><option value="Нет">Нет</option><option value="Да">Да</option></select></label>
-    <label>Зона / этаж / помещение<input name="redzone9" type="text" autocomplete="off" placeholder="Например: 2 этаж, коридор у процедурной"></label>
-  </div>
-  <label>Комментарий<textarea name="redcomment9" placeholder="Кратко опишите признак"></textarea></label>
-  <div class="grid two">
-    <label>Камера<input name="redcam9" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="red9"></label>
-    <label>Галерея / файлы<input name="redgal9" type="file" accept="image/*" multiple data-photo="1" data-photo-target="red9"></label>
-  </div>
-  <div class="preview" id="preview-red9"></div>
-</article>
-<article class="card" data-red-card="1" data-title="Есть помещения, где пациенты/персонал фактически не могут находиться из-за состояния конструкций, отделки, инженерных систем">
-  <div class="card-title">10. Есть помещения, где пациенты/персонал фактически не могут находиться из-за состояния конструкций, отделки, инженерных систем</div>
-  <div class="grid two">
-    <label>Выявлено *<select name="red10" data-red="1" required><option value="">Выберите</option><option value="Нет">Нет</option><option value="Да">Да</option></select></label>
-    <label>Зона / этаж / помещение<input name="redzone10" type="text" autocomplete="off" placeholder="Например: 2 этаж, коридор у процедурной"></label>
-  </div>
-  <label>Комментарий<textarea name="redcomment10" placeholder="Кратко опишите признак"></textarea></label>
-  <div class="grid two">
-    <label>Камера<input name="redcam10" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="red10"></label>
-    <label>Галерея / файлы<input name="redgal10" type="file" accept="image/*" multiple data-photo="1" data-photo-target="red10"></label>
-  </div>
-  <div class="preview" id="preview-red10"></div>
-</article></section>
-<section class="section"><h2>3. Основной визуальный чек-лист</h2><p class="muted">Выберите балл по каждому блоку. Комментарии и фото не блокируют расчёт.</p><article class="card" data-check-card="1" data-title="Фундаменты, подвал, цоколь, отмостка" data-weight="10">
-  <div class="card-title">1. Фундаменты, подвал, цоколь, отмостка <span class="weight">вес 10%</span></div>
-  <p class="muted">Что смотрит ЛПУ: Трещины в цоколе, просадки, разрушение отмостки, затопление подвала, сырость, грибок, солевые высолы</p>
-  <label>Балл визуального износа *<select name="score1" data-score="1" data-weight="10" required><option value="">Выберите балл</option><option value="0">0 — дефектов нет</option><option value="20">20 — локальные дефекты</option><option value="40">40 — распространённые дефекты</option><option value="60">60 — значительные дефекты</option><option value="80">80 — тяжёлое состояние</option><option value="100">100 — не работает / эксплуатация невозможна</option></select></label>
-  <div class="grid two">
-    <label>Зона / этаж / помещение<input name="zone1" type="text" autocomplete="off" placeholder="Укажите место дефекта"></label>
-    <label>Комментарий<textarea name="comment1" placeholder="Кратко опишите дефекты или укажите: дефектов не выявлено"></textarea></label>
-  </div>
-  <div class="grid two">
-    <label>Камера<input name="cam1" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="block1"></label>
-    <label>Галерея / файлы<input name="gal1" type="file" accept="image/*" multiple data-photo="1" data-photo-target="block1"></label>
-  </div>
-  <div class="preview" id="preview-block1"></div>
-</article>
-<article class="card" data-check-card="1" data-title="Несущие стены, колонны, каркас" data-weight="15">
-  <div class="card-title">2. Несущие стены, колонны, каркас <span class="weight">вес 15%</span></div>
-  <p class="muted">Что смотрит ЛПУ: Трещины, отклонения, разрушение кладки/бетона, оголение арматуры, следы коррозии, деформация проёмов</p>
-  <label>Балл визуального износа *<select name="score2" data-score="1" data-weight="15" required><option value="">Выберите балл</option><option value="0">0 — дефектов нет</option><option value="20">20 — локальные дефекты</option><option value="40">40 — распространённые дефекты</option><option value="60">60 — значительные дефекты</option><option value="80">80 — тяжёлое состояние</option><option value="100">100 — не работает / эксплуатация невозможна</option></select></label>
-  <div class="grid two">
-    <label>Зона / этаж / помещение<input name="zone2" type="text" autocomplete="off" placeholder="Укажите место дефекта"></label>
-    <label>Комментарий<textarea name="comment2" placeholder="Кратко опишите дефекты или укажите: дефектов не выявлено"></textarea></label>
-  </div>
-  <div class="grid two">
-    <label>Камера<input name="cam2" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="block2"></label>
-    <label>Галерея / файлы<input name="gal2" type="file" accept="image/*" multiple data-photo="1" data-photo-target="block2"></label>
-  </div>
-  <div class="preview" id="preview-block2"></div>
-</article>
-<article class="card" data-check-card="1" data-title="Перекрытия, лестницы, пандусы" data-weight="10">
-  <div class="card-title">3. Перекрытия, лестницы, пандусы <span class="weight">вес 10%</span></div>
-  <p class="muted">Что смотрит ЛПУ: Прогибы, трещины, разрушение ступеней, вибрации, повреждение ограждений, скользкие или разрушенные покрытия</p>
-  <label>Балл визуального износа *<select name="score3" data-score="1" data-weight="10" required><option value="">Выберите балл</option><option value="0">0 — дефектов нет</option><option value="20">20 — локальные дефекты</option><option value="40">40 — распространённые дефекты</option><option value="60">60 — значительные дефекты</option><option value="80">80 — тяжёлое состояние</option><option value="100">100 — не работает / эксплуатация невозможна</option></select></label>
-  <div class="grid two">
-    <label>Зона / этаж / помещение<input name="zone3" type="text" autocomplete="off" placeholder="Укажите место дефекта"></label>
-    <label>Комментарий<textarea name="comment3" placeholder="Кратко опишите дефекты или укажите: дефектов не выявлено"></textarea></label>
-  </div>
-  <div class="grid two">
-    <label>Камера<input name="cam3" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="block3"></label>
-    <label>Галерея / файлы<input name="gal3" type="file" accept="image/*" multiple data-photo="1" data-photo-target="block3"></label>
-  </div>
-  <div class="preview" id="preview-block3"></div>
-</article>
-<article class="card" data-check-card="1" data-title="Кровля и водоотведение" data-weight="10">
-  <div class="card-title">4. Кровля и водоотведение <span class="weight">вес 10%</span></div>
-  <p class="muted">Что смотрит ЛПУ: Протечки, пятна на потолках, разрушение покрытия, неисправные водостоки, наледь, намокание утеплителя</p>
-  <label>Балл визуального износа *<select name="score4" data-score="1" data-weight="10" required><option value="">Выберите балл</option><option value="0">0 — дефектов нет</option><option value="20">20 — локальные дефекты</option><option value="40">40 — распространённые дефекты</option><option value="60">60 — значительные дефекты</option><option value="80">80 — тяжёлое состояние</option><option value="100">100 — не работает / эксплуатация невозможна</option></select></label>
-  <div class="grid two">
-    <label>Зона / этаж / помещение<input name="zone4" type="text" autocomplete="off" placeholder="Укажите место дефекта"></label>
-    <label>Комментарий<textarea name="comment4" placeholder="Кратко опишите дефекты или укажите: дефектов не выявлено"></textarea></label>
-  </div>
-  <div class="grid two">
-    <label>Камера<input name="cam4" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="block4"></label>
-    <label>Галерея / файлы<input name="gal4" type="file" accept="image/*" multiple data-photo="1" data-photo-target="block4"></label>
-  </div>
-  <div class="preview" id="preview-block4"></div>
-</article>
-<article class="card" data-check-card="1" data-title="Фасад, окна, наружные двери" data-weight="8">
-  <div class="card-title">5. Фасад, окна, наружные двери <span class="weight">вес 8%</span></div>
-  <p class="muted">Что смотрит ЛПУ: Разрушение фасада, выпадение штукатурки/плитки, негерметичные окна, продувание, промерзание, разрушение входных групп</p>
-  <label>Балл визуального износа *<select name="score5" data-score="1" data-weight="8" required><option value="">Выберите балл</option><option value="0">0 — дефектов нет</option><option value="20">20 — локальные дефекты</option><option value="40">40 — распространённые дефекты</option><option value="60">60 — значительные дефекты</option><option value="80">80 — тяжёлое состояние</option><option value="100">100 — не работает / эксплуатация невозможна</option></select></label>
-  <div class="grid two">
-    <label>Зона / этаж / помещение<input name="zone5" type="text" autocomplete="off" placeholder="Укажите место дефекта"></label>
-    <label>Комментарий<textarea name="comment5" placeholder="Кратко опишите дефекты или укажите: дефектов не выявлено"></textarea></label>
-  </div>
-  <div class="grid two">
-    <label>Камера<input name="cam5" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="block5"></label>
-    <label>Галерея / файлы<input name="gal5" type="file" accept="image/*" multiple data-photo="1" data-photo-target="block5"></label>
-  </div>
-  <div class="preview" id="preview-block5"></div>
-</article>
-<article class="card" data-check-card="1" data-title="Внутренняя отделка лечебных и общих помещений" data-weight="8">
-  <div class="card-title">6. Внутренняя отделка лечебных и общих помещений <span class="weight">вес 8%</span></div>
-  <p class="muted">Что смотрит ЛПУ: Повреждение полов, стен, потолков, следы протечек, грибок, невозможность влажной уборки и дезинфекции</p>
-  <label>Балл визуального износа *<select name="score6" data-score="1" data-weight="8" required><option value="">Выберите балл</option><option value="0">0 — дефектов нет</option><option value="20">20 — локальные дефекты</option><option value="40">40 — распространённые дефекты</option><option value="60">60 — значительные дефекты</option><option value="80">80 — тяжёлое состояние</option><option value="100">100 — не работает / эксплуатация невозможна</option></select></label>
-  <div class="grid two">
-    <label>Зона / этаж / помещение<input name="zone6" type="text" autocomplete="off" placeholder="Укажите место дефекта"></label>
-    <label>Комментарий<textarea name="comment6" placeholder="Кратко опишите дефекты или укажите: дефектов не выявлено"></textarea></label>
-  </div>
-  <div class="grid two">
-    <label>Камера<input name="cam6" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="block6"></label>
-    <label>Галерея / файлы<input name="gal6" type="file" accept="image/*" multiple data-photo="1" data-photo-target="block6"></label>
-  </div>
-  <div class="preview" id="preview-block6"></div>
-</article>
-<article class="card" data-check-card="1" data-title="Водоснабжение, канализация, сантехника" data-weight="8">
-  <div class="card-title">7. Водоснабжение, канализация, сантехника <span class="weight">вес 8%</span></div>
-  <p class="muted">Что смотрит ЛПУ: Протечки, запах канализации, засоры, коррозия труб, неисправные раковины, санузлы, душевые, отсутствие горячей воды</p>
-  <label>Балл визуального износа *<select name="score7" data-score="1" data-weight="8" required><option value="">Выберите балл</option><option value="0">0 — дефектов нет</option><option value="20">20 — локальные дефекты</option><option value="40">40 — распространённые дефекты</option><option value="60">60 — значительные дефекты</option><option value="80">80 — тяжёлое состояние</option><option value="100">100 — не работает / эксплуатация невозможна</option></select></label>
-  <div class="grid two">
-    <label>Зона / этаж / помещение<input name="zone7" type="text" autocomplete="off" placeholder="Укажите место дефекта"></label>
-    <label>Комментарий<textarea name="comment7" placeholder="Кратко опишите дефекты или укажите: дефектов не выявлено"></textarea></label>
-  </div>
-  <div class="grid two">
-    <label>Камера<input name="cam7" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="block7"></label>
-    <label>Галерея / файлы<input name="gal7" type="file" accept="image/*" multiple data-photo="1" data-photo-target="block7"></label>
-  </div>
-  <div class="preview" id="preview-block7"></div>
-</article>
-<article class="card" data-check-card="1" data-title="Отопление, вентиляция, микроклимат" data-weight="10">
-  <div class="card-title">8. Отопление, вентиляция, микроклимат <span class="weight">вес 10%</span></div>
-  <p class="muted">Что смотрит ЛПУ: Холод/жара, духота, конденсат, жалобы, неработающие радиаторы, шум вентиляции, отсутствие вытяжки в санитарных и режимных помещениях</p>
-  <label>Балл визуального износа *<select name="score8" data-score="1" data-weight="10" required><option value="">Выберите балл</option><option value="0">0 — дефектов нет</option><option value="20">20 — локальные дефекты</option><option value="40">40 — распространённые дефекты</option><option value="60">60 — значительные дефекты</option><option value="80">80 — тяжёлое состояние</option><option value="100">100 — не работает / эксплуатация невозможна</option></select></label>
-  <div class="grid two">
-    <label>Зона / этаж / помещение<input name="zone8" type="text" autocomplete="off" placeholder="Укажите место дефекта"></label>
-    <label>Комментарий<textarea name="comment8" placeholder="Кратко опишите дефекты или укажите: дефектов не выявлено"></textarea></label>
-  </div>
-  <div class="grid two">
-    <label>Камера<input name="cam8" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="block8"></label>
-    <label>Галерея / файлы<input name="gal8" type="file" accept="image/*" multiple data-photo="1" data-photo-target="block8"></label>
-  </div>
-  <div class="preview" id="preview-block8"></div>
-</article>
-<article class="card" data-check-card="1" data-title="Электроснабжение и освещение" data-weight="8">
-  <div class="card-title">9. Электроснабжение и освещение <span class="weight">вес 8%</span></div>
-  <p class="muted">Что смотрит ЛПУ: Аварийные отключения, перегрузки, старые щиты, открытая проводка, недостаточное освещение, неисправные розетки</p>
-  <label>Балл визуального износа *<select name="score9" data-score="1" data-weight="8" required><option value="">Выберите балл</option><option value="0">0 — дефектов нет</option><option value="20">20 — локальные дефекты</option><option value="40">40 — распространённые дефекты</option><option value="60">60 — значительные дефекты</option><option value="80">80 — тяжёлое состояние</option><option value="100">100 — не работает / эксплуатация невозможна</option></select></label>
-  <div class="grid two">
-    <label>Зона / этаж / помещение<input name="zone9" type="text" autocomplete="off" placeholder="Укажите место дефекта"></label>
-    <label>Комментарий<textarea name="comment9" placeholder="Кратко опишите дефекты или укажите: дефектов не выявлено"></textarea></label>
-  </div>
-  <div class="grid two">
-    <label>Камера<input name="cam9" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="block9"></label>
-    <label>Галерея / файлы<input name="gal9" type="file" accept="image/*" multiple data-photo="1" data-photo-target="block9"></label>
-  </div>
-  <div class="preview" id="preview-block9"></div>
-</article>
-<article class="card" data-check-card="1" data-title="Пожарная безопасность и пути эвакуации" data-weight="8">
-  <div class="card-title">10. Пожарная безопасность и пути эвакуации <span class="weight">вес 8%</span></div>
-  <p class="muted">Что смотрит ЛПУ: Захламление путей эвакуации, неисправные двери, неработающие системы сигнализации/оповещения, закрытые эвакуационные выходы</p>
-  <label>Балл визуального износа *<select name="score10" data-score="1" data-weight="8" required><option value="">Выберите балл</option><option value="0">0 — дефектов нет</option><option value="20">20 — локальные дефекты</option><option value="40">40 — распространённые дефекты</option><option value="60">60 — значительные дефекты</option><option value="80">80 — тяжёлое состояние</option><option value="100">100 — не работает / эксплуатация невозможна</option></select></label>
-  <div class="grid two">
-    <label>Зона / этаж / помещение<input name="zone10" type="text" autocomplete="off" placeholder="Укажите место дефекта"></label>
-    <label>Комментарий<textarea name="comment10" placeholder="Кратко опишите дефекты или укажите: дефектов не выявлено"></textarea></label>
-  </div>
-  <div class="grid two">
-    <label>Камера<input name="cam10" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="block10"></label>
-    <label>Галерея / файлы<input name="gal10" type="file" accept="image/*" multiple data-photo="1" data-photo-target="block10"></label>
-  </div>
-  <div class="preview" id="preview-block10"></div>
-</article>
-<article class="card" data-check-card="1" data-title="Санитарное состояние помещений и возможность уборки/дезинфекции" data-weight="5">
-  <div class="card-title">11. Санитарное состояние помещений и возможность уборки/дезинфекции <span class="weight">вес 5%</span></div>
-  <p class="muted">Что смотрит ЛПУ: Состояние процедурных, перевязочных, операционных, лабораторий, стерилизационных, отходов, белья, чистых/грязных потоков</p>
-  <label>Балл визуального износа *<select name="score11" data-score="1" data-weight="5" required><option value="">Выберите балл</option><option value="0">0 — дефектов нет</option><option value="20">20 — локальные дефекты</option><option value="40">40 — распространённые дефекты</option><option value="60">60 — значительные дефекты</option><option value="80">80 — тяжёлое состояние</option><option value="100">100 — не работает / эксплуатация невозможна</option></select></label>
-  <div class="grid two">
-    <label>Зона / этаж / помещение<input name="zone11" type="text" autocomplete="off" placeholder="Укажите место дефекта"></label>
-    <label>Комментарий<textarea name="comment11" placeholder="Кратко опишите дефекты или укажите: дефектов не выявлено"></textarea></label>
-  </div>
-  <div class="grid two">
-    <label>Камера<input name="cam11" type="file" accept="image/*" capture="environment" data-photo="1" data-photo-target="block11"></label>
-    <label>Галерея / файлы<input name="gal11" type="file" accept="image/*" multiple data-photo="1" data-photo-target="block11"></label>
-  </div>
-  <div class="preview" id="preview-block11"></div>
-</article></section>
-</form>
-
-<section id="report"></section>
-</div>
-
-<div class="sticky no-print"><div class="sticky-inner"><div><div class="small">Индекс / статус</div><div id="stickyText">Заполните блок 3</div></div><div class="sticky-num" id="stickyIndex">—</div></div></div>
-
+<header class="no-print"><div class="wrap"><div class="topbar"><h1>Чек-лист визуальной самооценки износа здания медицинской организации</h1><select id="menuSelect" class="menuSelect" onchange="showView(this.value)"><option value="dashboard">Учреждения</option><option value="inspect">Осмотр</option><option value="reports">Отчёты</option><option value="method">Методика</option></select></div><nav><button id="nav_dashboard" onclick="showView('dashboard')">Учреждения</button><button id="nav_inspect" onclick="showView('inspect')" class="secondary">Осмотр</button><button id="nav_reports" onclick="showView('reports')" class="secondary">Отчёты</button><button id="nav_method" onclick="showView('method')" class="secondary">Методика</button></nav></div></header>
+<main class="wrap">
+<section id="dashboard" class="view"></section>
+<section id="inspect" class="view hidden"></section>
+<section id="reports" class="view hidden"><div class="section no-print"><h2>Отчёты и выгрузки</h2><div class="btnbar"><button onclick="buildBuildingReport(true)">Отчёт по зданию</button><button onclick="buildFacilityReport(true)" class="ok">Сводный отчёт</button><button onclick="buildAllReports(true)" class="secondary">Скачать архив отчётов</button><button onclick="printCurrentReport()" class="secondary">PDF / печать</button><button onclick="downloadCSV()" class="light">CSV</button><button onclick="downloadJSON()" class="light">JSON</button></div><p class="muted">Для PDF: нажмите «PDF / печать» → выберите «Сохранить как PDF» или «Поделиться».</p></div><section id="report" class="report"></section></section>
+<section id="method" class="view hidden"></section>
+</main>
+<div class="sticky no-print"><div class="sticky-inner"><div><div id="stickyLine" class="small">Заполнено 0 % · Индекс — · Статус — · Критические признаки 0</div><div id="stickyIndex" class="sticky-num">—</div></div><button onclick="goFirstMissing()" class="light">К незаполненному</button></div></div>
 <script>
-(function() {
+(function(){
 'use strict';
-var photoStore = {};
-var lastIndex = null;
-function qsa(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
-function qs(sel, root) { return (root || document).querySelector(sel); }
-function byId(id) { return document.getElementById(id); }
-function val(name) { var el = document.querySelector('[name="' + name + '"]'); return el ? (el.value || '') : ''; }
-function esc(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function setStatus(text, cls) { var st = byId('scriptStatus'); if (st) { st.className = 'status ' + (cls || 'ok'); st.textContent = text; } }
-function conclusion(index, hasRed) {
-  if (hasRed) return {cls:'bad', text:'Выявлены критические признаки риска. Требуется внеплановое обследование специализированной организацией; до получения заключения рассмотреть ограничение эксплуатации соответствующей зоны.'};
-  if (index === null) return {cls:'warn', text:'Для вывода необходимо заполнить баллы по блоку 3.'};
-  if (index <= 20) return {cls:'ok', text:'Визуально удовлетворительное состояние. Рекомендуется плановое обслуживание и локальный текущий ремонт.'};
-  if (index <= 40) return {cls:'warn', text:'Умеренный износ. Рекомендуется сформировать программу текущего ремонта и уточнить дефектные зоны.'};
-  if (index <= 60) return {cls:'warn', text:'Существенный износ. Рекомендуется техническое обследование по ключевым конструкциям/системам и программа капитального ремонта.'};
-  if (index <= 80) return {cls:'bad', text:'Высокий износ. Требуется внеплановое обследование, приоритизация капитального ремонта и оценка ограничения эксплуатации отдельных зон.'};
-  return {cls:'bad', text:'Критическое состояние по визуальной оценке. Требуется срочное обследование специализированной организацией.'};
-}
-function recalculate(mark) {
-  try {
-    var total = 0, wsum = 0, filled = 0;
-    var scores = qsa('select[data-score="1"]');
-    scores.forEach(function(sel) {
-      var card = sel.closest('.card');
-      if (sel.value === '') { if (mark && card) card.classList.add('missing'); } else { if (card) card.classList.remove('missing'); total += Number(sel.value) * Number(sel.getAttribute('data-weight') || 0) / 100; filled++; }
-      wsum += Number(sel.getAttribute('data-weight') || 0);
-    });
-    var hasRed = false, redFilled = 0;
-    qsa('select[data-red="1"]').forEach(function(sel) {
-      var card = sel.closest('.card');
-      if (sel.value === '') { if (mark && card) card.classList.add('missing'); } else { if (card) card.classList.remove('missing'); redFilled++; if (sel.value === 'Да') hasRed = true; }
-    });
-    qsa('[data-required="1"]').forEach(function(el) { if (!el.value && mark) el.classList.add('field-missing'); else el.classList.remove('field-missing'); });
-    var index = filled ? Math.round(total * 10) / 10 : null; lastIndex = index;
-    var idxText = index === null ? '—' : String(index).replace('.', ',') + ' %';
-    var res = conclusion(index, hasRed);
-    byId('resultIndex').textContent = idxText;
-    byId('stickyIndex').textContent = idxText;
-    byId('resultSummary').textContent = 'Заполнено баллов: ' + filled + ' из ' + scores.length + '. Критические признаки риска: ' + (hasRed ? 'есть' : 'нет') + '. Проверено критических признаков риска: ' + redFilled + ' из ' + qsa('select[data-red="1"]').length + '.';
-    byId('stickyText').textContent = hasRed ? 'Есть критические признаки риска' : (index === null ? 'Заполните блок 3' : byId('resultSummary').textContent);
-    var box = byId('resultConclusion'); box.className = 'status ' + res.cls; box.textContent = res.text;
-    return { index:index, hasRed:hasRed, filled:filled, scoreCount:scores.length, redFilled:redFilled };
-  } catch(e) { setStatus('Ошибка расчёта: ' + (e.message || e), 'bad'); return {index:null,hasRed:false,filled:0,scoreCount:0}; }
-}
-function compressImage(file, callback) {
-  var reader = new FileReader();
-  reader.onload = function(ev) {
-    var img = new Image();
-    img.onload = function() {
-      var max = 1200; var w = img.width, h = img.height;
-      if (w > h && w > max) { h = Math.round(h * max / w); w = max; }
-      else if (h >= w && h > max) { w = Math.round(w * max / h); h = max; }
-      var canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
-      var ctx = canvas.getContext('2d'); ctx.drawImage(img,0,0,w,h);
-      callback(canvas.toDataURL('image/jpeg',0.72));
-    };
-    img.onerror = function() { callback(ev.target.result); };
-    img.src = ev.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-function handlePhotos(input) {
-  var target = input.getAttribute('data-photo-target'); if (!target || !input.files) return;
-  if (!photoStore[target]) photoStore[target] = [];
-  Array.prototype.slice.call(input.files).forEach(function(file) {
-    if (!file.type || file.type.indexOf('image/') !== 0) return;
-    compressImage(file, function(dataUrl) { photoStore[target].push(dataUrl); renderPreview(target); });
-  });
-}
-function renderPreview(target) {
-  var box = byId('preview-' + target); if (!box) return; box.innerHTML = '';
-  (photoStore[target] || []).forEach(function(src) { var im = document.createElement('img'); im.src = src; box.appendChild(im); });
-}
-function reportPhotos(prefix) { 
-  var arr = photoStore[prefix] || [];
-  if (!arr.length) return '';
-  return '<div class="report-photo-grid">' + arr.map(function(src, i) { return '<img src="' + src + '" alt="Фото ' + (i+1) + '">'; }).join('') + '</div>'; 
-}
-function todayRu() {
-  var d = new Date();
-  return String(d.getDate()).padStart(2,'0') + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + d.getFullYear();
-}
-function scoreLabel(v) {
-  if (v === '') return 'не заполнено';
-  var map = {'0':'0 — дефектов нет','20':'20 — локальные дефекты','40':'40 — распространённые дефекты','60':'60 — значительные дефекты','80':'80 — тяжёлое состояние','100':'100 — эксплуатация невозможна'};
-  return map[String(v)] || String(v);
-}
-function reportSummaryText(index, hasRed) {
-  if (hasRed) return 'Выявлены критические признаки риска. Процентный индекс является вторичным; требуется внеплановое техническое обследование специализированной организацией и управленческая оценка необходимости ограничения эксплуатации соответствующих зон.';
-  if (index === null) return 'Предварительный индекс не рассчитан, так как не заполнены баллы основного чек-листа.';
-  if (index <= 20) return 'Предварительное визуальное состояние удовлетворительное. Рекомендуются плановое обслуживание и локальные мероприятия текущего ремонта.';
-  if (index <= 40) return 'Зафиксирован умеренный визуальный износ. Рекомендуется сформировать перечень текущего ремонта и уточнить дефектные зоны.';
-  if (index <= 60) return 'Зафиксирован существенный визуальный износ. Рекомендуется техническое обследование ключевых конструкций и инженерных систем, а также подготовка программы капитального ремонта.';
-  if (index <= 80) return 'Зафиксирован высокий визуальный износ. Требуется внеплановое обследование, приоритизация капитального ремонта и рассмотрение ограничения эксплуатации отдельных зон.';
-  return 'Зафиксировано критическое состояние по визуальной оценке. Требуется срочное обследование специализированной организацией и управленческое решение по дальнейшей эксплуатации.';
-}
-function buildReport(show) {
-  var r = recalculate(true);
-  var c = conclusion(r.index, r.hasRed);
-  var idx = r.index === null ? 'не рассчитан' : String(r.index).replace('.', ',') + ' %';
-  var redCount = 0;
-  qsa('select[data-red="1"]').forEach(function(sel){ if (sel.value === 'Да') redCount++; });
-  var photoCount = 0;
-  Object.keys(photoStore).forEach(function(k){ photoCount += (photoStore[k] || []).length; });
-  var h = '';
-  h += '<div class="report-cover">';
-  h += '<div class="report-title">Чек-лист визуальной самооценки износа здания медицинской организации</div>';
-  h += '<div class="muted">Комплексный отчёт, сформирован: ' + esc(todayRu()) + '</div>';
-  h += '<div style="margin-top:10px"><span class="report-chip">Индекс: ' + esc(idx) + '</span><span class="report-chip">Критические признаки риска: ' + redCount + '</span><span class="report-chip">Фото: ' + photoCount + '</span></div>';
-  h += '</div>';
-  h += '<h2>1. Общие сведения</h2>';
-  h += '<table class="report-meta-table"><tbody>';
-  h += '<tr><td>Медицинская организация</td><td>' + esc(val('org')) + '</td></tr>';
-  h += '<tr><td>Адрес</td><td>' + esc(val('address')) + '</td></tr>';
-  h += '<tr><td>Корпус / здание</td><td>' + esc(val('building')) + '</td></tr>';
-  h += '<tr><td>Дата осмотра</td><td>' + esc(val('date')) + '</td></tr>';
-  h += '<tr><td>Осмотр выполнил</td><td>' + esc(val('person')) + '</td></tr>';
-  h += '<tr><td>Должность</td><td>' + esc(val('role')) + '</td></tr>';
-  h += '<tr><td>Комментарий по объекту</td><td>' + esc(val('maincomment')) + '</td></tr>';
-  h += '</tbody></table>';
-  h += '<h2>2. Расчёт и предварительный вывод</h2>';
-  h += '<div class="report-conclusion ' + esc(c.cls) + '"><p><b>Предварительный визуальный индекс износа:</b> ' + esc(idx) + '</p><p><b>Предварительный вывод:</b> ' + esc(reportSummaryText(r.index, r.hasRed)) + '</p><p><b>Статус заполнения:</b> заполнено баллов ' + r.filled + ' из ' + r.scoreCount + '; проверено критических признаков риска ' + r.redFilled + ' из ' + qsa('select[data-red="1"]').length + '.</p></div>';
-  h += '<p><b>Расчётная модель:</b> предварительный визуальный индекс = сумма произведений выбранного балла по каждому блоку на вес блока / 100. При наличии критического признака риска итоговый процент не снимает необходимость внепланового обследования.</p>';
-  h += '<h2>3. Критические признаки риска</h2>';
-  h += '<table><thead><tr><th>№</th><th>Признак</th><th>Ответ</th><th>Зона / этаж / помещение</th><th>Комментарий</th><th>Фото</th></tr></thead><tbody>';
-  qsa('[data-red-card="1"]').forEach(function(card, i) { var n=i+1; h += '<tr><td>'+n+'</td><td>'+esc(card.getAttribute('data-title'))+'</td><td>'+esc(val('red'+n))+'</td><td>'+esc(val('redzone'+n))+'</td><td>'+esc(val('redcomment'+n))+'</td><td>'+reportPhotos('red'+n)+'</td></tr>'; });
-  h += '</tbody></table>';
-  h += '<h2 class="page-break">4. Основной визуальный чек-лист</h2>';
-  h += '<table><thead><tr><th>№</th><th>Блок проверки</th><th>Вес</th><th>Выбранный балл</th><th>Вклад в индекс</th><th>Зона / этаж / помещение</th><th>Комментарий</th><th>Фото</th></tr></thead><tbody>';
-  qsa('[data-check-card="1"]').forEach(function(card, i) { 
-    var n=i+1, weight=Number(card.getAttribute('data-weight')||0), sv=val('score'+n), contrib=(sv===''?'—':String(Math.round(Number(sv)*weight/10)/10).replace('.', ',')+' %');
-    h += '<tr><td>'+n+'</td><td>'+esc(card.getAttribute('data-title'))+'</td><td>'+esc(weight)+'%</td><td>'+esc(scoreLabel(sv))+'</td><td>'+esc(contrib)+'</td><td>'+esc(val('zone'+n))+'</td><td>'+esc(val('comment'+n))+'</td><td>'+reportPhotos('block'+n)+'</td></tr>'; 
-  });
-  h += '</tbody></table>';
-  h += '<h2>5. Фотофиксация</h2>';
-  var hasAny = false;
-  qsa('[data-red-card="1"]').forEach(function(card, i){ var n=i+1, ph=reportPhotos('red'+n); if(ph){ hasAny=true; h += '<h3>Красный флаг ' + n + '. ' + esc(card.getAttribute('data-title')) + '</h3>' + ph; }});
-  qsa('[data-check-card="1"]').forEach(function(card, i){ var n=i+1, ph=reportPhotos('block'+n); if(ph){ hasAny=true; h += '<h3>Блок ' + n + '. ' + esc(card.getAttribute('data-title')) + '</h3>' + ph; }});
-  if (!hasAny) h += '<p>Фотофиксация не приложена.</p>';
-  h += '<h2>6. Итоговое предварительное заключение</h2>';
-  h += '<p>' + esc(reportSummaryText(r.index, r.hasRed)) + '</p>';
-  h += '<p><b>Рекомендуемое действие:</b> ' + esc(c.text) + '</p>';
-  h += '<h2>7. Примечания и ограничения применения</h2>';
-  h += '<p>Настоящая самооценка является предварительной визуальной фиксацией признаков износа и эксплуатационных рисков. Она не является техническим обследованием здания, не заменяет заключение специализированной организации и не подтверждает категорию технического состояния объекта.</p>';
-  h += '<p>Окончательная оценка технического состояния, безопасности эксплуатации, необходимости капитального ремонта, реконструкции, усиления конструкций или ограничения эксплуатации выполняется по результатам обследования в установленном порядке.</p>';
-  h += '<div class="signature-grid"><div class="signature-box">Заполнил / подпись / дата</div><div class="signature-box">Руководитель / подпись / дата</div></div>';
-  var rep = byId('report'); rep.innerHTML = h; if (show) { rep.classList.add('visible'); rep.scrollIntoView({behavior:'smooth', block:'start'}); } return h;
-}
-function printReport() { buildReport(true); setStatus('Комплексный отчёт сформирован. Откроется системное окно печати/PDF.', 'ok'); setTimeout(function() { window.print(); }, 700); }
-function downloadReport() {
-  var content = buildReport(false);
-  var doc = '<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Комплексный отчёт</title><style>body{font-family:Arial,sans-serif;padding:20px;color:#101828}table{border-collapse:collapse;width:100%;font-size:12px;margin:10px 0}td,th{border:1px solid #999;padding:6px;vertical-align:top}th{background:#eee}img{max-width:160px;max-height:120px;object-fit:cover;margin:4px}.report-cover{border:2px solid #111;padding:16px;border-radius:10px}.report-title{font-size:24px;font-weight:700}.report-chip{display:inline-block;border-radius:20px;padding:4px 10px;background:#eef4ff;margin:3px}.report-photo-grid{display:flex;gap:8px;flex-wrap:wrap}.signature-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}.signature-box{border-top:1px solid #344054;padding-top:8px;min-height:44px}.page-break{page-break-before:always}@media print{.page-break{page-break-before:always}tr,img{page-break-inside:avoid}}</style></head><body>' + content + '</body></html>';
-  var blob = new Blob([doc], {type:'text/html;charset=utf-8'}); var url = URL.createObjectURL(blob); var a = document.createElement('a'); a.href = url; a.download = 'kompleksnyy-otchet-chek-list-iznosa.html'; document.body.appendChild(a); a.click(); setTimeout(function() { URL.revokeObjectURL(url); a.remove(); }, 1000);
-}
-function shareSummary() {
-  var r = recalculate(true); var c = conclusion(r.index, r.hasRed); var text = 'Чек-лист визуальной самооценки износа здания медицинской организации\n' + 'МО: ' + val('org') + '\nАдрес: ' + val('address') + '\nИндекс: ' + (r.index === null ? 'не рассчитан' : String(r.index).replace('.', ',') + ' %') + '\nВывод: ' + c.text + '\n\nДля отправки полного PDF нажмите «Сформировать PDF / печать» и используйте системное меню устройства.';
-  if (navigator.share) { navigator.share({title:'Чек-лист износа', text:text}).catch(function(){}); }
-  else { location.href = 'mailto:?subject=' + encodeURIComponent('Чек-лист износа') + '&body=' + encodeURIComponent(text); }
-}
-function clearForm() { if (!confirm('Очистить заполненные данные?')) return; byId('checklistForm').reset(); photoStore = {}; qsa('.preview').forEach(function(p){p.innerHTML='';}); byId('report').classList.remove('visible'); byId('report').innerHTML=''; recalculate(false); }
-function bind() {
-  setStatus('Расчёт запущен. Выберите баллы в блоке 3 — индекс обновится автоматически.', 'ok');
-  document.addEventListener('change', function(ev) { var t = ev.target; if (!t) return; if (t.matches && t.matches('input[type="file"][data-photo="1"]')) { handlePhotos(t); return; } recalculate(false); }, true);
-  document.addEventListener('input', function() { recalculate(false); }, true);
-  document.addEventListener('touchend', function() { setTimeout(function() { recalculate(false); }, 80); }, true);
-  byId('btnCalc').addEventListener('click', function(){ recalculate(true); });
-  byId('btnReport').addEventListener('click', function(){ buildReport(true); });
-  byId('btnPrint').addEventListener('click', printReport);
-  byId('btnDownload').addEventListener('click', downloadReport);
-  byId('btnShare').addEventListener('click', shareSummary);
-  byId('btnClear').addEventListener('click', clearForm);
-  setInterval(function(){ recalculate(false); }, 500);
-  recalculate(false);
-}
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind); else bind();
-window.addEventListener('load', function() { if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) navigator.serviceWorker.register('./service-worker.js').catch(function(){}); });
+var STORAGE_KEY='medorgChecklistV27FullApp';
+var VERSION='v27-full-app';
+function uid(){return 'id_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function qsa(sel,root){return Array.prototype.slice.call((root||document).querySelectorAll(sel));}
+function qs(sel,root){return (root||document).querySelector(sel);}
+function byId(id){return document.getElementById(id);}
+var RISKS=['Сквозные трещины в несущих стенах, колоннах, ригелях, плитах перекрытия','Видимый прогиб перекрытий, балок, лестничных маршей или площадок','Просадка пола, деформация отмостки, крен здания, перекос оконных/дверных проёмов','Обрушение или выпадение фрагментов фасада, кирпичной кладки, бетона, штукатурки с высоты','Регулярные протечки кровли над электрощитовой, серверной, кислородной, операционной, реанимацией, лабораторией','Следы замыкания, оплавления, запах гари, искрение, открытая проводка в зонах пребывания пациентов','Неработающая пожарная сигнализация, система оповещения, дымоудаление или противопожарный водопровод','Затопление подвала, длительное увлажнение фундаментов, плесень и грибок в помещениях постоянного пребывания людей','Отсутствует нормальная работа отопления, вентиляции, водоснабжения или канализации в лечебных помещениях','Есть помещения, где пациенты/персонал фактически не могут находиться из-за состояния конструкций, отделки или инженерных систем'];
+var BLOCKS=[
+{id:'foundation',group:'construct',title:'Фундаменты, подвал, цоколь, отмостка',weight:10,rec:'Проверить признаки увлажнения, просадок, разрушения отмостки и цоколя.'},
+{id:'bearing',group:'construct',title:'Несущие стены, колонны, каркас',weight:15,rec:'При трещинах, деформациях, оголении арматуры требуется внеплановая проверка.'},
+{id:'floors',group:'construct',title:'Перекрытия, лестницы, пандусы',weight:10,rec:'Проверить прогибы, трещины, ступени, ограждения и безопасность МГН.'},
+{id:'roof',group:'construct',title:'Кровля и водоотведение',weight:10,rec:'Проверить покрытие, примыкания, водостоки и помещения нижележащих этажей.'},
+{id:'facade',group:'construct',title:'Фасад, окна, наружные двери',weight:8,rec:'Проверить безопасность фасада, тепловой контур и входные группы.'},
+{id:'finish',group:'construct',title:'Внутренняя отделка помещений',weight:8,rec:'Оценить повреждения полов, стен, потолков, возможность влажной уборки и дезинфекции.'},
+{id:'water',group:'engineering',title:'Водоснабжение, канализация, сантехника',weight:8,rec:'Проверить протечки, засоры, запах, санприборы и горячую воду.'},
+{id:'hvac',group:'engineering',title:'Отопление, вентиляция, микроклимат',weight:10,rec:'Проверить отопление, вентиляцию, конденсат, жалобы и режимные помещения.'},
+{id:'electric',group:'engineering',title:'Электроснабжение и освещение',weight:8,rec:'При признаках перегрева или искрения требуется проверка электротехнической службой.'},
+{id:'fire',group:'engineering',title:'Пожарная безопасность и пути эвакуации',weight:8,rec:'Проверить свободность путей эвакуации, выходы, сигнализацию и оповещение.'},
+{id:'sanitary',group:'medical',title:'Санитарное состояние помещений и возможность уборки/дезинфекции',weight:5,rec:'Проверить повреждения, грибок, влажность, возможность санитарной обработки и безопасного пребывания.'}
+];
+var SCORE_OPTIONS=[['','Выберите балл'],['0','0 — дефекты визуально не выявлены'],['20','20 — единичные локальные дефекты'],['40','40 — распространённые дефекты, нужен текущий ремонт'],['60','60 — значительные дефекты, нужен капремонт / обследование'],['80','80 — тяжёлое состояние, внеплановая проверка'],['100','100 — элемент/система фактически неработоспособны']];
+var STEP_NAMES=['Паспорт здания','Критические признаки риска','Конструкции','Инженерные системы','Санитарное состояние','Фото и комментарии','Предварительный вывод','Отчёт'];
+var state=loadState(); var activeStep=1; var currentReport='';
+function newBuilding(name){var scores={};BLOCKS.forEach(function(b){scores[b.id]={score:'',zone:'',comment:'',photos:[]};});var risks={};RISKS.forEach(function(r,i){risks['r'+i]={value:'',zone:'',comment:'',photos:[]};});return{id:uid(),name:name||'Здание / корпус 1',address:'',type:'',year:'',area:'',floors:'',patients:'',date:new Date().toISOString().slice(0,10),person:'',role:'',note:'',scores:scores,risks:risks,defects:[],statusDraft:'Черновик',updatedAt:new Date().toISOString()};}
+function defaultState(){var fid=uid(),b=newBuilding('Здание / корпус 1');return{activeFacilityId:fid,activeBuildingId:b.id,facilities:[{id:fid,name:'Новое учреждение',address:'',municipality:'',responsible:'',phone:'',buildings:[b]}]};}
+function loadState(){try{var raw=localStorage.getItem(STORAGE_KEY);if(!raw)return defaultState();var s=JSON.parse(raw);if(!s.facilities||!s.facilities.length)return defaultState();return s;}catch(e){return defaultState();}}
+function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){alert('Не удалось сохранить данные. Возможно, превышен лимит памяти из-за большого количества фото.');}}
+function facility(){var f=state.facilities.find(function(x){return x.id===state.activeFacilityId;});return f||state.facilities[0];}
+function building(){var f=facility();var b=f.buildings.find(function(x){return x.id===state.activeBuildingId;});return b||f.buildings[0];}
+function showView(id){qsa('.view').forEach(function(v){v.classList.add('hidden');});byId(id).classList.remove('hidden');qsa('nav button').forEach(function(b){b.classList.add('secondary');});var nb=byId('nav_'+id);if(nb)nb.classList.remove('secondary');byId('menuSelect').value=id;if(id==='inspect')renderInspect();if(id==='dashboard')renderDashboard();if(id==='method')renderMethod();if(id==='reports'&&currentReport){byId('report').innerHTML=currentReport;byId('report').classList.add('visible');}}
+window.showView=showView;
+function addFacility(){var name=prompt('Наименование учреждения:','Новое учреждение');if(name===null)return;var fid=uid(),b=newBuilding('Здание / корпус 1');state.facilities.push({id:fid,name:name||'Новое учреждение',address:'',municipality:'',responsible:'',phone:'',buildings:[b]});state.activeFacilityId=fid;state.activeBuildingId=b.id;saveState();renderAll();showView('dashboard');}
+function editFacility(fid){var f=state.facilities.find(function(x){return x.id===fid;});if(!f)return;var name=prompt('Наименование учреждения:',f.name);if(name===null)return;f.name=name||f.name;f.address=prompt('Адрес учреждения:',f.address||'')??f.address;f.responsible=prompt('Ответственный:',f.responsible||'')??f.responsible;f.phone=prompt('Телефон:',f.phone||'')??f.phone;saveState();renderAll();}
+function addBuilding(){var f=facility();var name=prompt('Наименование здания / корпуса:','Новое здание');if(name===null)return;var b=newBuilding(name||'Новое здание');f.buildings.push(b);state.activeBuildingId=b.id;saveState();renderAll();showView('inspect');}
+function deleteBuilding(bid){var f=facility();if(f.buildings.length<=1){alert('В учреждении должно остаться хотя бы одно здание.');return;}if(!confirm('Удалить здание?'))return;f.buildings=f.buildings.filter(function(b){return b.id!==bid;});state.activeBuildingId=f.buildings[0].id;saveState();renderAll();}
+function selectFacility(fid){state.activeFacilityId=fid;state.activeBuildingId=facility().buildings[0].id;saveState();renderAll();}
+function selectBuilding(bid){state.activeBuildingId=bid;saveState();renderAll();}
+window.addFacility=addFacility;window.editFacility=editFacility;window.addBuilding=addBuilding;window.deleteBuilding=deleteBuilding;window.selectFacility=selectFacility;window.selectBuilding=selectBuilding;
+function summary(b){var total=0,filled=0,red=0,redFilled=0,highNoProof=0,photoCount=0,zoneCount=0;BLOCKS.forEach(function(bl){var s=b.scores[bl.id];if(s.score!==''){total+=Number(s.score)*bl.weight/100;filled++;if(Number(s.score)>=60&&(!s.zone||!(s.photos||[]).length))highNoProof++;}if(s.zone)zoneCount++;photoCount+=(s.photos||[]).length;});Object.keys(b.risks).forEach(function(k){var r=b.risks[k];if(r.value==='Да'||r.value==='Нет')redFilled++;if(r.value==='Да')red++;if(r.zone)zoneCount++;photoCount+=(r.photos||[]).length;});(b.defects||[]).forEach(function(d){if(d.zone)zoneCount++;photoCount+=(d.photos||[]).length;});var base=[b.name,b.address,b.type,b.date,b.person,b.role].filter(Boolean).length;var required=6+RISKS.length+BLOCKS.length;var complete=Math.round((base+redFilled+filled)/required*100);var index=Math.round(total*10)/10;var status=statusFrom(index,red,b);var qualityScore=complete*.6+Math.min(100,photoCount*10)*.25+Math.min(100,zoneCount*7)*.15;var quality=qualityScore>=85?'Высокое':qualityScore>=60?'Среднее':'Низкое';return{index:index,indexText:filled?index.toFixed(1)+' %':'—',filled:filled,scoreCount:BLOCKS.length,red:red,redFilled:redFilled,complete:complete,status:status,quality:quality,photoCount:photoCount,highNoProof:highNoProof};}
+function statusFrom(index,red,b){if(red>0)return'Требуется внеплановая проверка';var sanitary=b&&b.scores&&b.scores.sanitary?Number(b.scores.sanitary.score||0):0;if((b.type==='Пищеблок'||b.type==='КДЛ')&&sanitary>=60)return'Высокий санитарно-эксплуатационный риск';var fire=b&&b.scores&&b.scores.fire?Number(b.scores.fire.score||0):0;var electric=b&&b.scores&&b.scores.electric?Number(b.scores.electric.score||0):0;if(b&&b.patients==='Да'&&(fire>=80||electric>=80))return'Срочная проверка';if(index>80)return'Критическое состояние по визуальной оценке';if(index>60)return'Высокий износ';if(index>40)return'Существенный износ';if(index>20)return'Умеренный износ';return'Удовлетворительное состояние';}
+function statusClass(st){if(/внеплан|Крит|Сроч|санитарно/i.test(st))return'red';if(/Высок|Суще/i.test(st))return'orange';if(/Умер/i.test(st))return'yellow';return'green';}
+function pill(st){return'<span class="pill '+statusClass(st)+'">'+esc(st)+'</span>';}
+function conclusion(s){if(s.red>0)return'Выявлены критические признаки технического и эксплуатационного риска. Требуется внеплановая проверка соответствующей зоны, конструктивного элемента или инженерной системы с привлечением профильной специализированной организации. Итоговый процент предварительного износа не может рассматриваться как достаточное основание для продолжения эксплуатации без дополнительной оценки.';if(/санитарно|Сроч/.test(s.status))return'Выявлен повышенный риск для эксплуатации здания с учётом типа объекта, наличия пациентов или характера дефекта. Требуется приоритетная проверка соответствующих зон и инженерных систем.';if(s.index>80)return'Состояние по визуальной оценке критическое. Требуется срочное техническое обследование специализированной организацией и управленческое решение о дальнейшей эксплуатации.';if(s.index>60)return'Выявлены признаки высокого физического износа. Требуется внеплановое обследование, приоритизация капитального ремонта и рассмотрение вопроса об ограничении эксплуатации отдельных зон.';if(s.index>40)return'Выявлены признаки существенного физического износа. Рекомендуется рассмотреть включение здания в программу капитального ремонта и провести обследование проблемных блоков.';if(s.index>20)return'Выявлены признаки умеренного физического износа. Рекомендуется сформировать перечень мероприятий текущего ремонта и уточнить дефектные зоны.';return'Состояние по предварительной визуальной самооценке удовлетворительное. Рекомендуется штатная эксплуатация, плановое обслуживание и локальное устранение выявленных дефектов.';}
+function priority(score,b){score=Number(score||0);if(score>=80)return'Срочно';if(score>=60)return(b.patients==='Да'||b.type==='Пищеблок'||b.type==='КДЛ')?'Срочно':'Высокий';if(score>=40)return'Средний';if(score>=20)return'Низкий';return'Наблюдение';}
+function facilitySummary(f){var sum=0,areaSum=0,red=0,comp=0,qualityNum=0;f.buildings.forEach(function(b){var s=summary(b);var area=Number(String(b.area||'').replace(',','.'))||1;if(s.filled){sum+=s.index*area;areaSum+=area;}red+=s.red;comp+=s.complete;qualityNum+=s.quality==='Высокое'?3:s.quality==='Среднее'?2:1;});var idx=areaSum?Math.round(sum/areaSum*10)/10:0;return{index:idx,indexText:areaSum?idx.toFixed(1)+' %':'—',red:red,complete:Math.round(comp/Math.max(1,f.buildings.length)),quality:qualityNum/f.buildings.length>=2.5?'Высокое':qualityNum/f.buildings.length>=1.7?'Среднее':'Низкое',status:red>0?'Требуется внеплановая проверка':statusFrom(idx,0,{scores:{sanitary:{score:''}},type:'',patients:''})};}
+function renderDashboard(){var html='<section class="head"><h2>Учреждения и здания</h2><div class="btnbar"><button onclick="addFacility()">Добавить учреждение</button><button onclick="addBuilding()" class="secondary">Добавить здание / корпус</button><button onclick="buildFacilityReport(true)" class="ok">Сформировать сводный отчёт</button><button onclick="buildAllReports(true)" class="light">Скачать архив отчётов</button><button onclick="downloadCSV()" class="light">Экспортировать данные</button></div><p class="muted">Данные сохраняются локально на устройстве. Для переноса используйте JSON-выгрузку.</p></section>';state.facilities.forEach(function(f){var fs=facilitySummary(f);html+='<section class="section"><div class="topbar"><div><h2>'+esc(f.name)+'</h2><p class="muted">'+esc(f.address||'Адрес не указан')+'</p></div><div>'+pill(fs.status)+' <span class="pill gray">'+f.buildings.length+' здан.</span></div></div><div class="btnbar"><button onclick="state.activeFacilityId=\''+f.id+'\';state.activeBuildingId=facility().buildings[0].id;saveState();renderAll();showView(\'inspect\')">Продолжить осмотр</button><button class="secondary" onclick="state.activeFacilityId=\''+f.id+'\';saveState();addBuilding()">Добавить здание</button><button class="light" onclick="editFacility(\''+f.id+'\')">Редактировать</button><button class="ok" onclick="state.activeFacilityId=\''+f.id+'\';saveState();buildFacilityReport(true)">Сводный отчёт</button></div><div class="tableWrap"><table><thead><tr><th>Здание</th><th>Тип</th><th>Площадь</th><th>Индекс</th><th>Крит. признаки</th><th>Полнота</th><th>Статус</th><th>Действие</th></tr></thead><tbody>';f.buildings.forEach(function(b){var s=summary(b);html+='<tr><td>'+esc(b.name)+'</td><td>'+esc(b.type||'—')+'</td><td>'+esc(b.area||'—')+'</td><td>'+esc(s.indexText)+'</td><td>'+s.red+'</td><td>'+s.complete+'%</td><td>'+pill(s.status)+'</td><td><button class="light" onclick="state.activeFacilityId=\''+f.id+'\';state.activeBuildingId=\''+b.id+'\';saveState();renderAll();showView(\'inspect\')">Открыть</button></td></tr>';});html+='</tbody></table></div></section>';});byId('dashboard').innerHTML=html;}
+function renderInspect(){var f=facility(),b=building(),s=summary(b);var html='<section class="resultBox"><h2>Осмотр здания</h2><div id="scriptStatus" class="status ok">Расчёт запущен. Рабочая база: v26, расширение: v27.</div><div class="kpi"><div class="box"><div class="num">'+s.indexText+'</div><div class="cap">Предварительный индекс</div></div><div class="box"><div class="num">'+s.red+'</div><div class="cap">Критические признаки</div></div><div class="box"><div class="num">'+s.complete+'%</div><div class="cap">Полнота</div></div><div class="box"><div class="num">'+esc(s.quality)+'</div><div class="cap">Качество данных</div></div></div><p>'+pill(s.status)+'</p><div class="stepper">';STEP_NAMES.forEach(function(n,i){var cls=activeStep===i+1?'active':(stepStatus(i+1,b)==='done'?'done':(stepStatus(i+1,b)==='warn'?'warn':''));html+='<button class="step '+cls+'" onclick="setStep('+(i+1)+')">'+(i+1)+'. '+esc(n)+'</button>';});html+='</div><div class="btnbar"><button onclick="prevStep()" class="secondary">Назад</button><button onclick="nextStep()">Далее</button><button onclick="goFirstMissing()" class="light">К первому незаполненному</button><button onclick="buildBuildingReport(true)" class="ok">Отчёт</button><button onclick="printCurrentReport()" class="secondary">PDF / печать</button></div></section>';
+html+=renderStep(activeStep);byId('inspect').innerHTML=html;attachVoiceButtons();updateSticky();}
+function stepStatus(n,b){if(n===1)return(b.name&&b.address&&b.type&&b.date&&b.person&&b.role)?'done':'warn';if(n===2){var vals=Object.values(b.risks).filter(function(r){return r.value==='Да'||r.value==='Нет'}).length;return vals===RISKS.length?'done':'warn';}if(n===3){return BLOCKS.filter(function(x){return x.group==='construct'}).every(function(x){return b.scores[x.id].score!==''})?'done':'warn';}if(n===4){return BLOCKS.filter(function(x){return x.group==='engineering'}).every(function(x){return b.scores[x.id].score!==''})?'done':'warn';}if(n===5)return b.scores.sanitary.score!==''?'done':'warn';if(n===6)return'neutral';if(n===7)return'done';if(n===8)return'done';return'';}
+function renderStep(n){if(n===1)return renderPassport();if(n===2)return renderRisks();if(n===3)return renderScores('construct','Конструкции');if(n===4)return renderScores('engineering','Инженерные системы');if(n===5)return renderScores('medical','Санитарное состояние помещений');if(n===6)return renderDefects();if(n===7)return renderConclusion();if(n===8)return renderReportStep();}
+function renderPassport(){var f=facility(),b=building();return'<section class="section"><h2>1. Паспорт здания</h2><div class="grid"><label class="col6">Учреждение *<select onchange="selectFacility(this.value)">'+state.facilities.map(function(ff){return'<option value="'+ff.id+'" '+(ff.id===state.activeFacilityId?'selected':'')+'>'+esc(ff.name)+'</option>';}).join('')+'</select></label><label class="col6">Здание / корпус *<select onchange="selectBuilding(this.value)">'+f.buildings.map(function(bb){return'<option value="'+bb.id+'" '+(bb.id===state.activeBuildingId?'selected':'')+'>'+esc(bb.name)+'</option>';}).join('')+'</select></label><label class="col6">Наименование здания / корпуса *<input data-required="1" value="'+esc(b.name)+'" oninput="setB(\'name\',this.value)"></label><label class="col6">Адрес / литера / площадка *<input data-required="1" value="'+esc(b.address)+'" oninput="setB(\'address\',this.value)"></label><label class="col4">Тип здания *<select data-required="1" onchange="setB(\'type\',this.value)">'+opt(['','Стационар','Поликлиника','ФАП / амбулатория','КДЛ','Пищеблок','Административное здание','Хозяйственный корпус','Иное'],b.type)+'</select></label><label class="col4">Год постройки<input type="number" inputmode="numeric" value="'+esc(b.year)+'" oninput="setB(\'year\',this.value)"></label><label class="col4">Площадь, м²<input type="number" inputmode="decimal" value="'+esc(b.area)+'" oninput="setB(\'area\',this.value)"></label><label class="col4">Этажность<input type="number" inputmode="numeric" value="'+esc(b.floors)+'" oninput="setB(\'floors\',this.value)"></label><label class="col4">Есть пациенты?<select onchange="setB(\'patients\',this.value)">'+opt(['','Да','Нет'],b.patients)+'</select></label><label class="col4">Дата осмотра *<input data-required="1" type="date" value="'+esc(b.date)+'" oninput="setB(\'date\',this.value)"></label><label class="col6">Ф.И.О. заполнившего *<input data-required="1" value="'+esc(b.person)+'" oninput="setB(\'person\',this.value)"></label><label class="col6">Должность *<input data-required="1" value="'+esc(b.role)+'" oninput="setB(\'role\',this.value)"></label><label class="col12">Краткое описание объекта / примечание<textarea oninput="setB(\'note\',this.value)">'+esc(b.note)+'</textarea></label></div></section>';}
+function opt(arr,val){return arr.map(function(x){return'<option value="'+esc(x)+'" '+(x===val?'selected':'')+'>'+(x?esc(x):'Выберите')+'</option>';}).join('');}
+function setB(k,v){var b=building();b[k]=v;b.updatedAt=new Date().toISOString();saveState();recalculate(false);} window.setB=setB;
+function renderRisks(){var b=building();var h='<section class="section"><h2>2. Критические признаки риска</h2><p class="muted">Если выбран хотя бы один ответ «Да», итоговый статус переводится в режим внеплановой проверки.</p>';RISKS.forEach(function(t,i){var id='r'+i,r=b.risks[id];h+='<article class="item '+(r.value==='Да'?'critical':'')+'"><div class="card-title">'+(i+1)+'. '+esc(t)+'</div><div class="grid"><label class="col4">Выявлено *<select data-red="1" onchange="setRisk(\''+id+'\',\'value\',this.value)">'+opt(['','Нет','Да'],r.value)+'</select></label><label class="col4">Зона / этаж / помещение<input value="'+esc(r.zone)+'" oninput="setRisk(\''+id+'\',\'zone\',this.value)"></label><label class="col4">Комментарий<input value="'+esc(r.comment)+'" oninput="setRisk(\''+id+'\',\'comment\',this.value)"></label><label class="col6">Камера<input type="file" accept="image/*" capture="environment" onchange="addPhoto(event,\'risk\',\''+id+'\')"></label><label class="col6">Галерея<input type="file" accept="image/*" multiple onchange="addPhoto(event,\'risk\',\''+id+'\')"></label></div><div class="preview">'+thumbs(r.photos,'risk',id)+'</div></article>';});return h+'</section>';}
+function renderScores(group,title){var b=building();var list=BLOCKS.filter(function(x){return x.group===group;});var h='<section class="section"><h2>'+esc(title)+'</h2>';list.forEach(function(bl){var s=b.scores[bl.id],v=Number(s.score||0),contrib=s.score===''?'—':(v*bl.weight/100).toFixed(1)+' %';h+='<article class="checkCard '+(v>=80?'critical':(v>=60?'warn':''))+'"><div class="card-title">'+esc(bl.title)+' <span class="weight">Вес '+bl.weight+' · вклад '+contrib+'</span></div><label>Балл визуального износа *<select data-score="1" onchange="setScore(\''+bl.id+'\',\'score\',this.value)">'+SCORE_OPTIONS.map(function(o){return'<option value="'+o[0]+'" '+(String(s.score)===String(o[0])?'selected':'')+'>'+esc(o[1])+'</option>';}).join('')+'</select></label><div class="grid"><label class="col6">Зона / этаж / помещение<input value="'+esc(s.zone)+'" oninput="setScore(\''+bl.id+'\',\'zone\',this.value)"></label><label class="col6">Комментарий<input value="'+esc(s.comment)+'" oninput="setScore(\''+bl.id+'\',\'comment\',this.value)"></label><label class="col6">Камера<input type="file" accept="image/*" capture="environment" onchange="addPhoto(event,\'score\',\''+bl.id+'\')"></label><label class="col6">Галерея<input type="file" accept="image/*" multiple onchange="addPhoto(event,\'score\',\''+bl.id+'\')"></label></div><p class="muted">'+esc(bl.rec)+'</p><div class="preview">'+thumbs(s.photos,'score',bl.id)+'</div></article>';});return h+'</section>';}
+function setRisk(id,k,v){building().risks[id][k]=v;saveState();recalculate(false);} window.setRisk=setRisk;
+function setScore(id,k,v){building().scores[id][k]=v;saveState();recalculate(false);} window.setScore=setScore;
+function renderDefects(){var b=building();var h='<section class="section"><h2>6. Фото и комментарии / карточки дефектов</h2><p class="muted">Карточка дефекта нужна для конкретной проблемы, которую нужно включить в ремонт, обследование или реестр.</p><div class="btnbar"><button onclick="addDefect()">Добавить дефект</button></div>';if(!b.defects.length)h+='<p class="muted">Карточки дефектов пока не добавлены.</p>';b.defects.forEach(function(d,i){h+='<article class="item '+(d.priority==='Срочно'?'critical':(d.priority==='Высокий'?'warn':''))+'"><div class="topbar"><div class="card-title">Дефект '+(i+1)+'</div><button class="danger" onclick="deleteDefect('+i+')">Удалить</button></div><div class="grid"><label class="col4">Блок<select onchange="setDefect('+i+',\'block\',this.value)">'+opt([''].concat(BLOCKS.map(function(x){return x.title;})),d.block)+'</select></label><label class="col4">Зона<input value="'+esc(d.zone)+'" oninput="setDefect('+i+',\'zone\',this.value)"></label><label class="col4">Приоритет<select onchange="setDefect('+i+',\'priority\',this.value)">'+opt(['Низкий','Средний','Высокий','Срочно'],d.priority||'Средний')+'</select></label><label class="col12">Описание<textarea oninput="setDefect('+i+',\'desc\',this.value)">'+esc(d.desc)+'</textarea></label><label class="col6">Камера<input type="file" accept="image/*" capture="environment" onchange="addDefectPhoto(event,'+i+')"></label><label class="col6">Галерея<input type="file" accept="image/*" multiple onchange="addDefectPhoto(event,'+i+')"></label></div><div class="preview">'+(d.photos||[]).map(function(p,j){return '<span><img src="'+p.data+'"><button class="danger" onclick="removeDefectPhoto('+i+','+j+')">×</button></span>';}).join('')+'</div></article>';});return h+'</section>';}
+function addDefect(){building().defects.push({block:'',zone:'',priority:'Средний',desc:'',photos:[]});saveState();renderInspect();} window.addDefect=addDefect;
+function setDefect(i,k,v){building().defects[i][k]=v;saveState();recalculate(false);} window.setDefect=setDefect;
+function deleteDefect(i){if(!confirm('Удалить дефект?'))return;building().defects.splice(i,1);saveState();renderInspect();} window.deleteDefect=deleteDefect;
+function renderConclusion(){var b=building(),s=summary(b);var warn=[];if(s.highNoProof>0)warn.push('Есть блоки с оценкой 60+ без зоны и/или фото.');if(s.complete<90)warn.push('Заполнение неполное. Рекомендуется заполнить обязательные поля перед направлением отчёта.');if(s.quality==='Низкое')warn.push('Качество данных низкое: добавьте фото, зоны и комментарии.');return'<section class="section"><h2>7. Предварительный вывод</h2><div class="kpi"><div class="box"><div class="num">'+s.indexText+'</div><div class="cap">Индекс</div></div><div class="box"><div class="num">'+s.red+'</div><div class="cap">Критические признаки</div></div><div class="box"><div class="num">'+s.complete+'%</div><div class="cap">Полнота</div></div><div class="box"><div class="num">'+esc(s.quality)+'</div><div class="cap">Качество</div></div></div><p>'+pill(s.status)+'</p><div class="status '+(s.red?'bad':'info')+'">'+esc(conclusion(s))+'</div>'+(warn.length?'<h3>Контроль качества заполнения</h3><ul>'+warn.map(function(x){return'<li>'+esc(x)+'</li>';}).join('')+'</ul>':'<p class="muted">Критических замечаний к качеству заполнения не выявлено.</p>')+'</section>';}
+function renderReportStep(){return'<section class="section"><h2>8. Отчёт</h2><div class="btnbar"><button onclick="buildBuildingReport(true)" class="ok">Показать отчёт по зданию</button><button onclick="buildFacilityReport(true)">Сводный отчёт</button><button onclick="printCurrentReport()" class="secondary">PDF / печать</button><button onclick="buildAllReports(true)" class="light">Скачать архив отчётов</button></div><p class="muted">Отчёт включает паспорт, индекс, критические признаки риска, таблицу блоков, фото, мероприятия и блок «Не является техническим обследованием».</p></section>';}
+function thumbs(arr,kind,id){return (arr||[]).map(function(p,i){return'<span><img src="'+p.data+'"><button class="danger" onclick="removePhoto(\''+kind+'\',\''+id+'\','+i+')">×</button></span>';}).join('');}
+function compress(file,cb){var reader=new FileReader();reader.onload=function(ev){var img=new Image();img.onload=function(){var max=1280,w=img.width,h=img.height,sc=Math.min(1,max/Math.max(w,h));w=Math.round(w*sc);h=Math.round(h*sc);var c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);cb(c.toDataURL('image/jpeg',.72));};img.onerror=function(){cb(ev.target.result);};img.src=ev.target.result;};reader.readAsDataURL(file);}
+function addPhoto(ev,kind,id){var files=Array.prototype.slice.call(ev.target.files||[]);if(!files.length)return;var target=kind==='risk'?building().risks[id]:building().scores[id];var pending=files.length;files.forEach(function(file){compress(file,function(data){target.photos.push({data:data,name:file.name,date:new Date().toISOString()});pending--;if(pending===0){saveState();renderInspect();}});});ev.target.value='';} window.addPhoto=addPhoto;
+function addDefectPhoto(ev,i){var files=Array.prototype.slice.call(ev.target.files||[]);if(!files.length)return;var target=building().defects[i];var pending=files.length;files.forEach(function(file){compress(file,function(data){target.photos.push({data:data,name:file.name,date:new Date().toISOString()});pending--;if(pending===0){saveState();renderInspect();}});});ev.target.value='';} window.addDefectPhoto=addDefectPhoto;
+function removePhoto(kind,id,i){var target=kind==='risk'?building().risks[id]:building().scores[id];target.photos.splice(i,1);saveState();renderInspect();} window.removePhoto=removePhoto;
+function removeDefectPhoto(i,j){building().defects[i].photos.splice(j,1);saveState();renderInspect();} window.removeDefectPhoto=removeDefectPhoto;
+function prevStep(){activeStep=Math.max(1,activeStep-1);renderInspect();window.scrollTo(0,0);}function nextStep(){activeStep=Math.min(8,activeStep+1);renderInspect();window.scrollTo(0,0);}function setStep(n){activeStep=n;renderInspect();window.scrollTo(0,0);}window.prevStep=prevStep;window.nextStep=nextStep;window.setStep=setStep;
+function recalculate(mark){if(mark)markMissing();updateSticky();renderDashboardSilently();} window.recalculate=recalculate;
+function renderDashboardSilently(){/* no-op to avoid expensive re-render while typing */}
+function markMissing(){qsa('[data-required]').forEach(function(el){el.classList.toggle('field-missing',!String(el.value||'').trim());});qsa('select[data-red]').forEach(function(el){var card=el.closest('.item');if(card)card.classList.toggle('missing',!el.value);});qsa('select[data-score]').forEach(function(el){var card=el.closest('.checkCard');if(card)card.classList.toggle('missing',!el.value);});}
+function goFirstMissing(){markMissing();var el=qs('.field-missing,.missing select');if(el){el.scrollIntoView({behavior:'smooth',block:'center'});try{el.focus();}catch(e){}}else alert('Обязательные поля заполнены.');} window.goFirstMissing=goFirstMissing;
+function updateSticky(){var s=summary(building());byId('stickyLine').textContent='Заполнено '+s.complete+' % · Индекс '+s.indexText+' · Статус: '+s.status+' · Критические признаки: '+s.red;byId('stickyIndex').textContent=s.indexText;}
+function buildBuildingReport(show){var f=facility(),b=building(),s=summary(b);var redRows='';RISKS.forEach(function(t,i){var r=b.risks['r'+i];redRows+='<tr><td>'+(i+1)+'</td><td>'+esc(t)+'</td><td>'+esc(r.value||'—')+'</td><td>'+esc(r.zone||'—')+'</td><td>'+esc(r.comment||'—')+'</td><td>'+photosHtml(r.photos)+'</td></tr>';});var scoreRows='',measures='';BLOCKS.forEach(function(bl,i){var sc=b.scores[bl.id],sv=sc.score,contrib=sv===''?'—':(Number(sv)*bl.weight/100).toFixed(1)+' %';scoreRows+='<tr><td>'+(i+1)+'</td><td>'+esc(bl.title)+'</td><td>'+bl.weight+'%</td><td>'+esc(scoreLabel(sv))+'</td><td>'+contrib+'</td><td>'+esc(sc.zone||'—')+'</td><td>'+esc(sc.comment||'—')+'</td><td>'+photosHtml(sc.photos)+'</td></tr>';if(sv!==''&&Number(sv)>=20)measures+='<tr><td>'+(i+1)+'</td><td>'+esc(bl.title)+'</td><td>'+esc(sv)+'</td><td>'+priority(sv,b)+'</td><td>'+esc(bl.rec)+'</td></tr>';});var defects=b.defects.length?'<table><thead><tr><th>№</th><th>Блок</th><th>Зона</th><th>Приоритет</th><th>Описание</th><th>Фото</th></tr></thead><tbody>'+b.defects.map(function(d,i){return'<tr><td>'+(i+1)+'</td><td>'+esc(d.block||'—')+'</td><td>'+esc(d.zone||'—')+'</td><td>'+esc(d.priority||'—')+'</td><td>'+esc(d.desc||'—')+'</td><td>'+photosHtml(d.photos)+'</td></tr>';}).join('')+'</tbody></table>':'<p>Карточки дефектов не добавлены.</p>';currentReport='<div class="report-cover"><div class="report-title">Предварительный отчёт по визуальной самооценке износа здания медицинской организации</div><p><b>Учреждение:</b> '+esc(f.name)+'<br><b>Здание:</b> '+esc(b.name)+'<br><b>Адрес:</b> '+esc(b.address||f.address||'—')+'<br><b>Дата формирования:</b> '+new Date().toLocaleString('ru-RU')+'</p><span class="report-chip">Индекс: '+esc(s.indexText)+'</span><span class="report-chip">Статус: '+esc(s.status)+'</span><span class="report-chip">Полнота: '+s.complete+'%</span><span class="report-chip">Критические признаки: '+s.red+'</span></div><div class="report-conclusion '+(s.red?'bad':(s.index>40?'warn':'ok'))+'"><p><b>Управленческий вывод:</b> '+esc(conclusion(s))+'</p></div><h3>Паспорт здания</h3><table><tbody><tr><th>Тип</th><td>'+esc(b.type||'—')+'</td><th>Площадь</th><td>'+esc(b.area||'—')+'</td></tr><tr><th>Год</th><td>'+esc(b.year||'—')+'</td><th>Этажность</th><td>'+esc(b.floors||'—')+'</td></tr><tr><th>Пациенты</th><td>'+esc(b.patients||'—')+'</td><th>Заполнил</th><td>'+esc(b.person||'—')+', '+esc(b.role||'—')+'</td></tr></tbody></table><h3>Критические признаки риска</h3><table><thead><tr><th>№</th><th>Признак</th><th>Ответ</th><th>Зона</th><th>Комментарий</th><th>Фото</th></tr></thead><tbody>'+redRows+'</tbody></table><h3>Оценка по 11 блокам</h3><table><thead><tr><th>№</th><th>Блок</th><th>Вес</th><th>Балл</th><th>Вклад</th><th>Зона</th><th>Комментарий</th><th>Фото</th></tr></thead><tbody>'+scoreRows+'</tbody></table><h3>Карточки дефектов</h3>'+defects+'<h3>Перечень рекомендуемых мероприятий</h3><table><thead><tr><th>№</th><th>Блок</th><th>Балл</th><th>Приоритет</th><th>Рекомендация</th></tr></thead><tbody>'+(measures||'<tr><td colspan="5">Мероприятия не сформированы.</td></tr>')+'</tbody></table><h3>Не является техническим обследованием</h3><p>Настоящий отчёт является результатом предварительной визуальной самооценки и не является техническим обследованием здания. Отчёт не устанавливает официальный процент физического износа, не определяет категорию технического состояния здания, строительных конструкций или инженерных систем и не заменяет обследование специализированной организацией по ГОСТ 31937-2024.</p><div class="signature-grid"><div class="signature-box">Составил / подпись</div><div class="signature-box">Проверил / подпись</div></div>';showReport(show);return currentReport;}
+function photosHtml(arr){arr=arr||[];if(!arr.length)return'—';return'<div class="report-photo-grid">'+arr.map(function(p){return'<img src="'+p.data+'" alt="Фото">';}).join('')+'</div>';}
+function scoreLabel(v){if(v==='')return'—';var map={'0':'0 — дефектов нет','20':'20 — локальные дефекты','40':'40 — распространённые дефекты','60':'60 — значительные дефекты','80':'80 — тяжёлое состояние','100':'100 — неработоспособно'};return map[String(v)]||v;}
+function showReport(show){if(show){byId('report').innerHTML=currentReport;byId('report').classList.add('visible');showView('reports');byId('report').scrollIntoView({behavior:'smooth',block:'start'});}}
+function buildFacilityReport(show){var f=facility(),fs=facilitySummary(f);var rows='',buildingReports='';f.buildings.forEach(function(b,i){var s=summary(b);rows+='<tr><td>'+(i+1)+'</td><td>'+esc(b.name)+'</td><td>'+esc(b.type||'—')+'</td><td>'+esc(b.area||'—')+'</td><td>'+esc(s.indexText)+'</td><td>'+s.red+'</td><td>'+s.complete+'%</td><td>'+esc(s.status)+'</td></tr>';});currentReport='<div class="report-cover"><div class="report-title">Сводный отчёт по учреждению</div><p><b>Учреждение:</b> '+esc(f.name)+'<br><b>Адрес:</b> '+esc(f.address||'—')+'<br><b>Дата формирования:</b> '+new Date().toLocaleString('ru-RU')+'</p><span class="report-chip">Зданий: '+f.buildings.length+'</span><span class="report-chip">Индекс учреждения: '+fs.indexText+'</span><span class="report-chip">Статус: '+esc(fs.status)+'</span><span class="report-chip">Критические признаки: '+fs.red+'</span></div><p><b>Правило свода:</b> индекс учреждения считается как Σ(индекс здания × площадь здания) / Σ площадь зданий. Если есть критический признак риска хотя бы в одном здании, статус учреждения определяется по худшему риску, а не по среднему индексу.</p><table><thead><tr><th>№</th><th>Здание</th><th>Тип</th><th>Площадь</th><th>Индекс</th><th>Крит. признаки</th><th>Полнота</th><th>Статус</th></tr></thead><tbody>'+rows+'</tbody></table><h3>Не является техническим обследованием</h3><p>Сводный отчёт предназначен для предварительной управленческой приоритизации объектов учреждения и не заменяет обследование по ГОСТ 31937-2024.</p>';showReport(show);return currentReport;}
+function buildAllReports(download){var f=facility();var html='<h1>Архив отчётов по учреждению: '+esc(f.name)+'</h1>'+buildFacilityReport(false);f.buildings.forEach(function(b){state.activeBuildingId=b.id;html+='<div class="page-break"></div>'+buildBuildingReport(false);});currentReport=html;if(download)downloadHtml(html,'arhiv_otchetov_'+safeName(f.name)+'.html');renderAll();return html;} window.buildBuildingReport=buildBuildingReport;window.buildFacilityReport=buildFacilityReport;window.buildAllReports=buildAllReports;
+function printCurrentReport(){if(!currentReport)buildBuildingReport(true);else showReport(true);setTimeout(function(){window.print();},500);} window.printCurrentReport=printCurrentReport;
+function downloadHtml(content,name){var doc='<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Отчёт</title><style>body{font-family:Arial,sans-serif;padding:20px;color:#101828}table{border-collapse:collapse;width:100%;font-size:12px;margin:10px 0}td,th{border:1px solid #999;padding:6px;vertical-align:top}th{background:#eee}img{max-width:160px;max-height:120px;object-fit:cover;margin:4px}.report-cover{border:2px solid #111;padding:16px;border-radius:10px}.report-title{font-size:24px;font-weight:700}.report-chip{display:inline-block;border-radius:20px;padding:4px 10px;background:#eef4ff;margin:3px}.report-photo-grid{display:flex;gap:8px;flex-wrap:wrap}.signature-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}.signature-box{border-top:1px solid #344054;padding-top:8px;min-height:44px}.page-break{page-break-before:always}@media print{tr,img{page-break-inside:avoid}}</style></head><body>'+content+'</body></html>';downloadBlob(doc,name,'text/html;charset=utf-8');}
+function safeName(s){return String(s||'report').replace(/[^a-zа-я0-9_-]+/ig,'_').slice(0,80);}function downloadJSON(){downloadBlob(JSON.stringify(state,null,2),'medorg_checklist_data.json','application/json;charset=utf-8');} window.downloadJSON=downloadJSON;
+function downloadCSV(){var rows=[['ЛПУ','Здание','Адрес','Тип','Площадь','Индекс','Критические признаки','Полнота','Статус','Дата']];state.facilities.forEach(function(f){f.buildings.forEach(function(b){var s=summary(b);rows.push([f.name,b.name,b.address||f.address,b.type,b.area,s.indexText,s.red,s.complete+'%',s.status,b.date]);});});var csv='\ufeff'+rows.map(function(r){return r.map(function(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"';}).join(';');}).join('\n');downloadBlob(csv,'reestr_visualnaya_samoocenka.csv','text/csv;charset=utf-8');} window.downloadCSV=downloadCSV;
+function downloadBlob(content,name,type){var blob=new Blob([content],{type:type});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(url);a.remove();},1000);}
+function attachVoiceButtons(){qsa('input[type="text"],input:not([type]),textarea').forEach(function(el){if(el.dataset.voiceAttached==='1'||el.readOnly||el.disabled)return;el.dataset.voiceAttached='1';var div=document.createElement('div');div.className='voice-tools no-print';var btn=document.createElement('button');btn.type='button';btn.className='light';btn.textContent='Голосовой ввод';btn.onclick=function(){startVoice(el,btn);};div.appendChild(btn);if(!supportsVoice()){var note=document.createElement('div');note.className='voice-note';note.textContent='Если кнопка не работает, используйте микрофон на клавиатуре iPhone/Android.';div.appendChild(note);}el.insertAdjacentElement('afterend',div);});}
+function supportsVoice(){return !!(window.SpeechRecognition||window.webkitSpeechRecognition);}function startVoice(field,btn){if(!supportsVoice()){alert('В этом браузере встроенная транскрибация недоступна. На iPhone нажмите поле и используйте микрофон клавиатуры.');field.focus();return;}try{var SR=window.SpeechRecognition||window.webkitSpeechRecognition;var rec=new SR();rec.lang='ru-RU';rec.interimResults=true;rec.continuous=false;var base=field.value||'';field.classList.add('voice-active');btn.textContent='Слушаю…';rec.onresult=function(ev){var final='',interim='';for(var i=ev.resultIndex;i<ev.results.length;i++){var txt=ev.results[i][0].transcript;if(ev.results[i].isFinal)final+=txt+' ';else interim+=txt;}field.value=(base+' '+final+interim).trim();field.dispatchEvent(new Event('input',{bubbles:true}));};rec.onend=function(){field.classList.remove('voice-active');btn.textContent='Голосовой ввод';};rec.onerror=rec.onend;rec.start();}catch(e){alert('Голосовой ввод не запустился. Используйте системную диктовку клавиатуры.');}}
+function renderMethod(){byId('method').innerHTML='<section class="section"><h2>Методика расчёта</h2><p>Продукт разработан как цифровой инструмент предварительной визуальной самооценки и управленческой приоритизации объектов медицинской инфраструктуры. Методика не заменяет техническое обследование по ГОСТ 31937-2024.</p><p><b>Предварительный индекс износа здания = Σ (балл блока × вес блока) / 100.</b></p><p>Формула не является самостоятельной нормативной формулой ГОСТ 31937-2024. Это упрощённая управленческая адаптация принципа средневзвешенной оценки: каждому из 11 блоков присваивается визуальный балл от 0 до 100 и весовой коэффициент, отражающий значимость блока для эксплуатации здания.</p><p>При наличии критических признаков риска приоритет определяется не итоговым процентом, а необходимостью внеплановой проверки соответствующей зоны или системы.</p><div class="tableWrap"><table><thead><tr><th>№</th><th>Блок</th><th>Вес</th></tr></thead><tbody>'+BLOCKS.map(function(b,i){return'<tr><td>'+(i+1)+'</td><td>'+esc(b.title)+'</td><td>'+b.weight+'%</td></tr>';}).join('')+'</tbody></table></div><h3>Ограничение применения</h3><p>Отчёт не устанавливает официальный процент физического износа, не определяет категорию технического состояния и не заменяет обследование специализированной организацией.</p></section>';}
+function renderAll(){renderDashboard();renderInspect();renderMethod();updateSticky();}
+window.renderAll=renderAll;window.saveState=saveState;window.state=state;window.facility=facility;
+function init(){renderAll();showView('dashboard');setInterval(function(){updateSticky();},800);if('serviceWorker'in navigator&&location.protocol.indexOf('http')===0){navigator.serviceWorker.register('./service-worker.js').catch(function(){});}}
+window.addEventListener('DOMContentLoaded',init);window.addEventListener('error',function(e){var st=byId('scriptStatus');if(st){st.className='status bad';st.textContent='Ошибка скрипта: '+(e.message||e);}});
 })();
 </script>
 </body>
