@@ -441,8 +441,27 @@ body {
   }
 }
 
+
+/* v40 navigation fix */
+.nav-anchor-target {
+  scroll-margin-top: 92px;
+}
+.bottom-nav {
+  opacity: 1 !important;
+}
+.bottom-nav:disabled {
+  opacity: .45 !important;
+}
+
+
+/* v41 wizard navigation fix */
+.bottom-nav:disabled {
+  opacity: .35 !important;
+  pointer-events: none !important;
+}
+
 </style>
-<meta name="app-version" content="v39-bottom-navigation">
+<meta name="app-version" content="v41-wizard-nav-fixed">
 </head>
 <body>
 <header class="no-print"><div class="wrap"><div class="topbar"><h1>Чек-лист визуальной самооценки износа здания медицинской организации</h1><select id="menuSelect" class="menuSelect" onchange="showView(this.value)"><option value="dashboard">Учреждения</option><option value="inspect">Осмотр</option><option value="reports">Отчёты</option><option value="method">Методика</option></select></div></div></header>
@@ -453,22 +472,22 @@ body {
 <section id="method" class="view hidden"></section>
 </main>
 <div class="bottom-mini no-print" id="bottomMini">
-  <button class="bottom-nav" id="bottomBack" type="button" onclick="goPrevSection()" aria-label="Назад">‹</button>
+  <button class="bottom-nav" id="bottomBack" type="button" onclick="bottomPrevSmart()" aria-label="Назад">‹</button>
   <div class="bottom-main" id="bottomSummary">
     <span id="bottomIndexText">Индекс: —</span>
     <span id="bottomStatusText">Статус: —</span>
     <span id="bottomMoreText">Заполнено: — · Критические признаки: —</span>
   </div>
   <div class="bottom-actions">
-    <button class="bottom-nav" id="bottomTop" type="button" onclick="scrollCurrentTop()" aria-label="Вверх">↑</button>
-    <button class="bottom-nav primary-mini" id="bottomNext" type="button" onclick="goNextSection()" aria-label="Далее">›</button>
+    <button class="bottom-nav" id="bottomTop" type="button" onclick="bottomTopSmart()" aria-label="Вверх">↑</button>
+    <button class="bottom-nav primary-mini" id="bottomNext" type="button" onclick="bottomNextSmart()" aria-label="Далее">›</button>
   </div>
 </div>
 <script>
 (function(){
 'use strict';
-var STORAGE_KEY='medorgChecklistV39BottomNavigation';
-var VERSION='v39-bottom-navigation';
+var STORAGE_KEY='medorgChecklistV41WizardNavFixed';
+var VERSION='v41-wizard-nav-fixed';
 function uid(){return 'id_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);}
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function qsa(sel,root){return Array.prototype.slice.call((root||document).querySelectorAll(sel));}
@@ -653,95 +672,107 @@ function updateBottomPanelStable(){
 })();
 
 
-/* v39 section navigation */
-const NAV_SECTION_TITLES = [
-  "Паспорт здания",
-  "Критические признаки риска",
-  "Конструкции",
-  "Инженерные системы",
-  "Медицинская специфика",
-  "Фото и комментарии",
-  "Предварительный вывод",
-  "Отчёт"
-];
 
-function getVisibleSections(){
-  const candidates = Array.from(document.querySelectorAll("section, .card, .panel, .block, article, div"));
-  const sections = [];
-  NAV_SECTION_TITLES.forEach(function(title){
-    let found = null;
-    for(const el of candidates){
-      if(found) break;
-      const h = el.querySelector && el.querySelector("h1,h2,h3");
-      const text = h ? (h.textContent || "").trim() : "";
-      if(text.indexOf(title) !== -1 && el.offsetParent !== null){
-        found = el;
-      }
+
+/* v41 bottom navigation bound to the real inspection wizard */
+function isInspectVisible(){
+  const inspect = document.getElementById("inspect");
+  return !!(inspect && !inspect.classList.contains("hidden"));
+}
+
+function getMaxWizardStep(){
+  return 8;
+}
+
+function bottomPrevSmart(){
+  if(isInspectVisible() && typeof prevStep === "function"){
+    prevStep();
+    setTimeout(updateBottomWizardButtons, 80);
+    return;
+  }
+  // fallback for non-inspection screens
+  window.scrollBy({top: -Math.round(window.innerHeight * 0.85), behavior: "smooth"});
+}
+
+function bottomNextSmart(){
+  if(isInspectVisible() && typeof nextStep === "function"){
+    nextStep();
+    setTimeout(updateBottomWizardButtons, 80);
+    return;
+  }
+  // fallback for non-inspection screens
+  window.scrollBy({top: Math.round(window.innerHeight * 0.85), behavior: "smooth"});
+}
+
+function bottomTopSmart(){
+  if(isInspectVisible()){
+    const currentSection = document.querySelector("#inspect .section, #inspect .resultBox");
+    if(currentSection){
+      currentSection.scrollIntoView({behavior:"smooth", block:"start"});
+      return;
     }
-    if(found && !sections.includes(found)) sections.push(found);
-  });
-
-  if(!sections.length){
-    // fallback: all visible cards with headings
-    document.querySelectorAll(".card").forEach(function(el){
-      const h = el.querySelector("h2,h3");
-      if(h && el.offsetParent !== null) sections.push(el);
-    });
   }
-  return sections;
+  window.scrollTo({top:0, behavior:"smooth"});
 }
 
-function currentSectionIndex(){
-  const sections = getVisibleSections();
-  if(!sections.length) return -1;
-  const y = window.scrollY + 120;
-  let idx = 0;
-  sections.forEach(function(sec, i){
-    if(sec.getBoundingClientRect().top + window.scrollY <= y) idx = i;
-  });
-  return idx;
-}
-
-function scrollToSectionByDelta(delta){
-  const sections = getVisibleSections();
-  if(!sections.length) return;
-  let idx = currentSectionIndex();
-  if(idx < 0) idx = 0;
-  let next = Math.max(0, Math.min(sections.length - 1, idx + delta));
-  // if moving next but still within same section near bottom, force next
-  if(delta > 0 && next === idx && idx < sections.length - 1) next = idx + 1;
-  sections[next].scrollIntoView({behavior:"smooth", block:"start"});
-  setTimeout(updateNavButtons, 250);
-}
-
-function goNextSection(){ scrollToSectionByDelta(1); }
-function goPrevSection(){ scrollToSectionByDelta(-1); }
-
-function scrollCurrentTop(){
-  const sections = getVisibleSections();
-  const idx = currentSectionIndex();
-  if(sections.length && idx >= 0){
-    sections[idx].scrollIntoView({behavior:"smooth", block:"start"});
-  } else {
-    window.scrollTo({top:0, behavior:"smooth"});
-  }
-}
-
-function updateNavButtons(){
-  const sections = getVisibleSections();
-  const idx = currentSectionIndex();
+function updateBottomWizardButtons(){
   const back = document.getElementById("bottomBack");
   const next = document.getElementById("bottomNext");
-  if(back) back.disabled = !sections.length || idx <= 0;
-  if(next) next.disabled = !sections.length || idx >= sections.length - 1;
+  if(!back || !next) return;
+
+  if(isInspectVisible() && typeof activeStep !== "undefined"){
+    back.disabled = activeStep <= 1;
+    next.disabled = activeStep >= getMaxWizardStep();
+    next.title = activeStep >= getMaxWizardStep() ? "Последний шаг" : "Далее";
+    back.title = activeStep <= 1 ? "Первый шаг" : "Назад";
+  } else {
+    back.disabled = false;
+    next.disabled = false;
+    back.title = "Назад";
+    next.title = "Далее";
+  }
 }
 
+// Wrap showView, setStep, prevStep, nextStep to keep buttons synced.
 (function(){
-  window.addEventListener("scroll", function(){ window.requestAnimationFrame(updateNavButtons); }, {passive:true});
-  window.addEventListener("resize", updateNavButtons);
+  const oldShowView = typeof showView === "function" ? showView : null;
+  if(oldShowView){
+    showView = function(id){
+      oldShowView(id);
+      setTimeout(updateBottomWizardButtons, 80);
+    };
+  }
+
+  const oldSetStep = typeof setStep === "function" ? setStep : null;
+  if(oldSetStep){
+    setStep = function(n){
+      oldSetStep(n);
+      setTimeout(updateBottomWizardButtons, 80);
+    };
+    window.setStep = setStep;
+  }
+
+  const oldPrevStep = typeof prevStep === "function" ? prevStep : null;
+  if(oldPrevStep){
+    prevStep = function(){
+      oldPrevStep();
+      setTimeout(updateBottomWizardButtons, 80);
+    };
+    window.prevStep = prevStep;
+  }
+
+  const oldNextStep = typeof nextStep === "function" ? nextStep : null;
+  if(oldNextStep){
+    nextStep = function(){
+      oldNextStep();
+      setTimeout(updateBottomWizardButtons, 80);
+    };
+    window.nextStep = nextStep;
+  }
+
   window.addEventListener("DOMContentLoaded", function(){
-    setTimeout(updateNavButtons, 300);
-    setInterval(updateNavButtons, 1200);
+    setTimeout(updateBottomWizardButtons, 250);
+    setInterval(updateBottomWizardButtons, 1200);
   });
 })();
 
