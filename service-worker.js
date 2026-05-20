@@ -1,7 +1,7 @@
 /* service-worker.js
-   Версия кэша: v36-no-footer-duplicate
+   Версия кэша: v37-bugfix-footer-clean
 */
-const CACHE_NAME = "medorg-checklist-v36-no-footer-duplicate";
+const CACHE_NAME = "medorg-checklist-v37-bugfix-footer-clean";
 const APP_ASSETS = [
   "./",
   "./index.html",

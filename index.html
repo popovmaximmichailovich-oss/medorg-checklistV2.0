@@ -260,8 +260,14 @@ body.bottom-expanded {
   padding-bottom: 118px !important;
 }
 
+
+/* v37 bugfix: prevent orphan old sticky controls */
+body > button[onclick="goFirstMissing()"].light {
+  display: none !important;
+}
+
 </style>
-<meta name="app-version" content="v36-no-footer-duplicate">
+<meta name="app-version" content="v37-bugfix-footer-clean">
 </head>
 <body>
 <header class="no-print"><div class="wrap"><div class="topbar"><h1>Чек-лист визуальной самооценки износа здания медицинской организации</h1><select id="menuSelect" class="menuSelect" onchange="showView(this.value)"><option value="dashboard">Учреждения</option><option value="inspect">Осмотр</option><option value="reports">Отчёты</option><option value="method">Методика</option></select></div></div></header>
@@ -271,8 +277,6 @@ body.bottom-expanded {
 <section id="reports" class="view hidden"><div class="section no-print"><h2>Отчёты и выгрузки</h2><div class="btnbar"><button onclick="buildBuildingReport(true)">Отчёт по зданию</button><button onclick="buildFacilityReport(true)" class="ok">Сводный отчёт</button><button onclick="buildAllReports(true)" class="secondary">Скачать архив отчётов</button><button onclick="printCurrentReport()" class="secondary">PDF / печать</button><button onclick="downloadCSV()" class="light">CSV</button><button onclick="downloadJSON()" class="light">JSON</button></div><p class="muted">Для PDF: нажмите «PDF / печать» → выберите «Сохранить как PDF» или «Поделиться».</p></div><section id="report" class="report"></section></section>
 <section id="method" class="view hidden"></section>
 </main>
-<button onclick="goFirstMissing()" class="light">К незаполненному</button></div></div>
-
 <div class="bottom-mini no-print" id="bottomMini">
   <button class="bottom-toggle" id="bottomToggle" type="button" onclick="toggleBottomPanel()" aria-label="Раскрыть или свернуть нижнюю панель">⌃</button>
   <div class="bottom-main" id="bottomSummary">
@@ -285,8 +289,8 @@ body.bottom-expanded {
 <script>
 (function(){
 'use strict';
-var STORAGE_KEY='medorgChecklistV27FullApp';
-var VERSION='v27-full-app';
+var STORAGE_KEY='medorgChecklistV37BugfixFooterClean';
+var VERSION='v37-bugfix-footer-clean';
 function uid(){return 'id_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);}
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function qsa(sel,root){return Array.prototype.slice.call((root||document).querySelectorAll(sel));}
