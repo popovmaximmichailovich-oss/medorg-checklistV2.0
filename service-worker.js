@@ -1,8 +1,8 @@
 /* service-worker.js
    Чек-лист визуальной самооценки износа здания медицинской организации
-   Версия кэша: v32-presentation-checked
+   Версия кэша: v33-compact-footer
 */
-const CACHE_NAME = "medorg-checklist-v32-presentation-checked";
+const CACHE_NAME = "medorg-checklist-v33-compact-footer";
 const APP_ASSETS = [
   "./",
   "./index.html",
