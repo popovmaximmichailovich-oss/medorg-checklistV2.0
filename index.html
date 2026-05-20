@@ -161,7 +161,91 @@ body.bottom-expanded { padding-bottom: 118px !important; }
   body, body.bottom-expanded { padding-bottom: 0 !important; }
 }
 
+
+/* v35 compact progress / missing-field controls */
+button[onclick*="goFirstMissing"],
+.btn[onclick*="goFirstMissing"] {
+  min-height: 32px !important;
+  padding: 5px 9px !important;
+  font-size: 12px !important;
+  line-height: 1.1 !important;
+  border-radius: 999px !important;
+}
+
+button[onclick*="goFirstMissing"]::before,
+.btn[onclick*="goFirstMissing"]::before {
+  content: "↧ ";
+}
+
+.kpi {
+  gap: 6px !important;
+}
+
+.kpi .box {
+  padding: 8px 9px !important;
+  border-radius: 12px !important;
+}
+
+.kpi .num {
+  font-size: clamp(15px, 4.2vw, 20px) !important;
+  line-height: 1.05 !important;
+}
+
+.kpi .cap {
+  font-size: 10.5px !important;
+  line-height: 1.1 !important;
+}
+
+.progress-mini {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid #dbe4ef;
+  border-radius: 14px;
+  padding: 7px 9px;
+  margin: 7px 0 9px;
+}
+
+.progress-mini-text {
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1.18;
+  font-weight: 800;
+  color: #0f172a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.progress-mini button {
+  min-height: 30px !important;
+  padding: 4px 8px !important;
+  font-size: 12px !important;
+  border-radius: 999px !important;
+}
+
+@media(max-width:420px){
+  .progress-mini {
+    grid-template-columns: 1fr;
+    gap: 5px;
+    padding: 7px;
+  }
+  .progress-mini-text {
+    white-space: normal;
+  }
+  .progress-mini button {
+    width: 100%;
+  }
+}
+
+@media print {
+  .progress-mini { display: none !important; }
+}
+
 </style>
+<meta name="app-version" content="v35-compact-progress">
 </head>
 <body>
 <header class="no-print"><div class="wrap"><div class="topbar"><h1>Чек-лист визуальной самооценки износа здания медицинской организации</h1><select id="menuSelect" class="menuSelect" onchange="showView(this.value)"><option value="dashboard">Учреждения</option><option value="inspect">Осмотр</option><option value="reports">Отчёты</option><option value="method">Методика</option></select></div></div></header>
@@ -333,6 +417,37 @@ function updateBottomMiniFromKpi(){
   window.addEventListener("DOMContentLoaded", function(){
     setTimeout(updateBottomMiniFromKpi, 200);
     setInterval(updateBottomMiniFromKpi, 1000);
+  });
+})();
+
+
+/* v35 compact progress helper */
+function updateProgressMini(){
+  try{
+    const idxEl = document.getElementById("kpiIndex");
+    const statusEl = document.getElementById("kpiStatus");
+    const compEl = document.getElementById("kpiCompleteness") || document.getElementById("kpiComplete");
+    const riskEl = document.getElementById("kpiRisk");
+    const textEl = document.getElementById("progressMiniText");
+    if(!textEl) return;
+    const idx = idxEl ? (idxEl.textContent || "—").trim() : "—";
+    const status = statusEl ? (statusEl.textContent || "—").trim() : "—";
+    const comp = compEl ? (compEl.textContent || "—").trim() : "—";
+    const risks = riskEl ? (riskEl.textContent || "—").trim() : "—";
+    textEl.textContent = "Заполнено: " + comp + " · Индекс: " + idx + " · Риски: " + risks + " · " + status;
+  }catch(e){}
+}
+(function(){
+  const oldRecalcV35 = typeof recalcAndRender === "function" ? recalcAndRender : null;
+  if(oldRecalcV35){
+    recalcAndRender = function(){
+      oldRecalcV35();
+      updateProgressMini();
+    };
+  }
+  window.addEventListener("DOMContentLoaded", function(){
+    setTimeout(updateProgressMini, 250);
+    setInterval(updateProgressMini, 1000);
   });
 })();
 
