@@ -244,8 +244,24 @@ button[onclick*="goFirstMissing"]::before,
   .progress-mini { display: none !important; }
 }
 
+
+/* v36 duplicate footer cleanup */
+.sticky,
+.sticky-inner,
+#stickyLine,
+#stickyIndex,
+.progress-mini {
+  display: none !important;
+}
+body {
+  padding-bottom: 58px !important;
+}
+body.bottom-expanded {
+  padding-bottom: 118px !important;
+}
+
 </style>
-<meta name="app-version" content="v35-compact-progress">
+<meta name="app-version" content="v36-no-footer-duplicate">
 </head>
 <body>
 <header class="no-print"><div class="wrap"><div class="topbar"><h1>Чек-лист визуальной самооценки износа здания медицинской организации</h1><select id="menuSelect" class="menuSelect" onchange="showView(this.value)"><option value="dashboard">Учреждения</option><option value="inspect">Осмотр</option><option value="reports">Отчёты</option><option value="method">Методика</option></select></div></div></header>
@@ -255,13 +271,13 @@ button[onclick*="goFirstMissing"]::before,
 <section id="reports" class="view hidden"><div class="section no-print"><h2>Отчёты и выгрузки</h2><div class="btnbar"><button onclick="buildBuildingReport(true)">Отчёт по зданию</button><button onclick="buildFacilityReport(true)" class="ok">Сводный отчёт</button><button onclick="buildAllReports(true)" class="secondary">Скачать архив отчётов</button><button onclick="printCurrentReport()" class="secondary">PDF / печать</button><button onclick="downloadCSV()" class="light">CSV</button><button onclick="downloadJSON()" class="light">JSON</button></div><p class="muted">Для PDF: нажмите «PDF / печать» → выберите «Сохранить как PDF» или «Поделиться».</p></div><section id="report" class="report"></section></section>
 <section id="method" class="view hidden"></section>
 </main>
-<div class="sticky no-print"><div class="sticky-inner"><div><div id="stickyLine" class="small">Заполнено 0 % · Индекс — · Статус — · Критические признаки 0</div><div id="stickyIndex" class="sticky-num">—</div></div><button onclick="goFirstMissing()" class="light">К незаполненному</button></div></div>
+<button onclick="goFirstMissing()" class="light">К незаполненному</button></div></div>
 
 <div class="bottom-mini no-print" id="bottomMini">
   <button class="bottom-toggle" id="bottomToggle" type="button" onclick="toggleBottomPanel()" aria-label="Раскрыть или свернуть нижнюю панель">⌃</button>
   <div class="bottom-main" id="bottomSummary">
     <span id="bottomMainText">Индекс: — · Статус: —</span>
-    <span id="bottomMoreText">Полнота: — · Критические признаки: —</span>
+    <span id="bottomMoreText">Заполнено: — · Критические признаки: —</span>
   </div>
   <button class="bottom-recalc" type="button" onclick="recalcAndRender()">↻</button>
 </div>
@@ -344,7 +360,13 @@ function recalculate(mark){if(mark)markMissing();updateSticky();renderDashboardS
 function renderDashboardSilently(){/* no-op to avoid expensive re-render while typing */}
 function markMissing(){qsa('[data-required]').forEach(function(el){el.classList.toggle('field-missing',!String(el.value||'').trim());});qsa('select[data-red]').forEach(function(el){var card=el.closest('.item');if(card)card.classList.toggle('missing',!el.value);});qsa('select[data-score]').forEach(function(el){var card=el.closest('.checkCard');if(card)card.classList.toggle('missing',!el.value);});}
 function goFirstMissing(){markMissing();var el=qs('.field-missing,.missing select');if(el){el.scrollIntoView({behavior:'smooth',block:'center'});try{el.focus();}catch(e){}}else alert('Обязательные поля заполнены.');} window.goFirstMissing=goFirstMissing;
-function updateSticky(){var s=summary(building());byId('stickyLine').textContent='Заполнено '+s.complete+' % · Индекс '+s.indexText+' · Статус: '+s.status+' · Критические признаки: '+s.red;byId('stickyIndex').textContent=s.indexText;}
+function updateSticky(){
+  var s = summary(building());
+  var main = byId('bottomMainText');
+  var more = byId('bottomMoreText');
+  if(main){ main.textContent = 'Индекс: ' + s.indexText + ' · ' + s.status; }
+  if(more){ more.textContent = 'Заполнено: ' + s.complete + ' % · Критические признаки: ' + s.red; }
+}
 function buildBuildingReport(show){var f=facility(),b=building(),s=summary(b);var redRows='';RISKS.forEach(function(t,i){var r=b.risks['r'+i];redRows+='<tr><td>'+(i+1)+'</td><td>'+esc(t)+'</td><td>'+esc(r.value||'—')+'</td><td>'+esc(r.zone||'—')+'</td><td>'+esc(r.comment||'—')+'</td><td>'+photosHtml(r.photos)+'</td></tr>';});var scoreRows='',measures='';BLOCKS.forEach(function(bl,i){var sc=b.scores[bl.id],sv=sc.score,contrib=sv===''?'—':(Number(sv)*bl.weight/100).toFixed(1)+' %';scoreRows+='<tr><td>'+(i+1)+'</td><td>'+esc(bl.title)+'</td><td>'+bl.weight+'%</td><td>'+esc(scoreLabel(sv))+'</td><td>'+contrib+'</td><td>'+esc(sc.zone||'—')+'</td><td>'+esc(sc.comment||'—')+'</td><td>'+photosHtml(sc.photos)+'</td></tr>';if(sv!==''&&Number(sv)>=20)measures+='<tr><td>'+(i+1)+'</td><td>'+esc(bl.title)+'</td><td>'+esc(sv)+'</td><td>'+priority(sv,b)+'</td><td>'+esc(bl.rec)+'</td></tr>';});var defects=b.defects.length?'<table><thead><tr><th>№</th><th>Блок</th><th>Зона</th><th>Приоритет</th><th>Описание</th><th>Фото</th></tr></thead><tbody>'+b.defects.map(function(d,i){return'<tr><td>'+(i+1)+'</td><td>'+esc(d.block||'—')+'</td><td>'+esc(d.zone||'—')+'</td><td>'+esc(d.priority||'—')+'</td><td>'+esc(d.desc||'—')+'</td><td>'+photosHtml(d.photos)+'</td></tr>';}).join('')+'</tbody></table>':'<p>Карточки дефектов не добавлены.</p>';currentReport='<div class="report-cover"><div class="report-title">Предварительный отчёт по визуальной самооценке износа здания медицинской организации</div><p><b>Учреждение:</b> '+esc(f.name)+'<br><b>Здание:</b> '+esc(b.name)+'<br><b>Адрес:</b> '+esc(b.address||f.address||'—')+'<br><b>Дата формирования:</b> '+new Date().toLocaleString('ru-RU')+'</p><span class="report-chip">Индекс: '+esc(s.indexText)+'</span><span class="report-chip">Статус: '+esc(s.status)+'</span><span class="report-chip">Полнота: '+s.complete+'%</span><span class="report-chip">Критические признаки: '+s.red+'</span></div><div class="report-conclusion '+(s.red?'bad':(s.index>40?'warn':'ok'))+'"><p><b>Управленческий вывод:</b> '+esc(conclusion(s))+'</p></div><h3>Паспорт здания</h3><table><tbody><tr><th>Тип</th><td>'+esc(b.type||'—')+'</td><th>Площадь</th><td>'+esc(b.area||'—')+'</td></tr><tr><th>Год</th><td>'+esc(b.year||'—')+'</td><th>Этажность</th><td>'+esc(b.floors||'—')+'</td></tr><tr><th>Пациенты</th><td>'+esc(b.patients||'—')+'</td><th>Заполнил</th><td>'+esc(b.person||'—')+', '+esc(b.role||'—')+'</td></tr></tbody></table><h3>Критические признаки риска</h3><table><thead><tr><th>№</th><th>Признак</th><th>Ответ</th><th>Зона</th><th>Комментарий</th><th>Фото</th></tr></thead><tbody>'+redRows+'</tbody></table><h3>Оценка по 11 блокам</h3><table><thead><tr><th>№</th><th>Блок</th><th>Вес</th><th>Балл</th><th>Вклад</th><th>Зона</th><th>Комментарий</th><th>Фото</th></tr></thead><tbody>'+scoreRows+'</tbody></table><h3>Карточки дефектов</h3>'+defects+'<h3>Перечень рекомендуемых мероприятий</h3><table><thead><tr><th>№</th><th>Блок</th><th>Балл</th><th>Приоритет</th><th>Рекомендация</th></tr></thead><tbody>'+(measures||'<tr><td colspan="5">Мероприятия не сформированы.</td></tr>')+'</tbody></table><h3>Не является техническим обследованием</h3><p>Настоящий отчёт является результатом предварительной визуальной самооценки и не является техническим обследованием здания. Отчёт не устанавливает официальный процент физического износа, не определяет категорию технического состояния здания, строительных конструкций или инженерных систем и не заменяет обследование специализированной организацией по ГОСТ 31937-2024.</p><div class="signature-grid"><div class="signature-box">Составил / подпись</div><div class="signature-box">Проверил / подпись</div></div>';showReport(show);return currentReport;}
 function photosHtml(arr){arr=arr||[];if(!arr.length)return'—';return'<div class="report-photo-grid">'+arr.map(function(p){return'<img src="'+p.data+'" alt="Фото">';}).join('')+'</div>';}
 function scoreLabel(v){if(v==='')return'—';var map={'0':'0 — дефектов нет','20':'20 — локальные дефекты','40':'40 — распространённые дефекты','60':'60 — значительные дефекты','80':'80 — тяжёлое состояние','100':'100 — неработоспособно'};return map[String(v)]||v;}
@@ -420,36 +442,6 @@ function updateBottomMiniFromKpi(){
   });
 })();
 
-
-/* v35 compact progress helper */
-function updateProgressMini(){
-  try{
-    const idxEl = document.getElementById("kpiIndex");
-    const statusEl = document.getElementById("kpiStatus");
-    const compEl = document.getElementById("kpiCompleteness") || document.getElementById("kpiComplete");
-    const riskEl = document.getElementById("kpiRisk");
-    const textEl = document.getElementById("progressMiniText");
-    if(!textEl) return;
-    const idx = idxEl ? (idxEl.textContent || "—").trim() : "—";
-    const status = statusEl ? (statusEl.textContent || "—").trim() : "—";
-    const comp = compEl ? (compEl.textContent || "—").trim() : "—";
-    const risks = riskEl ? (riskEl.textContent || "—").trim() : "—";
-    textEl.textContent = "Заполнено: " + comp + " · Индекс: " + idx + " · Риски: " + risks + " · " + status;
-  }catch(e){}
-}
-(function(){
-  const oldRecalcV35 = typeof recalcAndRender === "function" ? recalcAndRender : null;
-  if(oldRecalcV35){
-    recalcAndRender = function(){
-      oldRecalcV35();
-      updateProgressMini();
-    };
-  }
-  window.addEventListener("DOMContentLoaded", function(){
-    setTimeout(updateProgressMini, 250);
-    setInterval(updateProgressMini, 1000);
-  });
-})();
 
 </script>
 </body>

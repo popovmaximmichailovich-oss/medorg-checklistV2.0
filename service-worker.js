@@ -1,7 +1,7 @@
 /* service-worker.js
-   Версия кэша: v35-compact-progress
+   Версия кэша: v36-no-footer-duplicate
 */
-const CACHE_NAME = "medorg-checklist-v35-compact-progress";
+const CACHE_NAME = "medorg-checklist-v36-no-footer-duplicate";
 const APP_ASSETS = [
   "./",
   "./index.html",
