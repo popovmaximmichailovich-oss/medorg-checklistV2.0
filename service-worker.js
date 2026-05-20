@@ -1,7 +1,7 @@
 /* service-worker.js
-   Версия кэша: v41-wizard-nav-fixed
+   Версия кэша: v42-clean-header
 */
-const CACHE_NAME = "medorg-checklist-v41-wizard-nav-fixed";
+const CACHE_NAME = "medorg-checklist-v42-clean-header";
 const APP_ASSETS = [
   "./",
   "./index.html",
