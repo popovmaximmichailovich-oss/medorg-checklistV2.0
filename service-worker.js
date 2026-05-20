@@ -1,8 +1,7 @@
 /* service-worker.js
-   Чек-лист визуальной самооценки износа здания медицинской организации
-   Версия кэша: v33-compact-footer
+   Версия кэша: v34-footer-rebuilt
 */
-const CACHE_NAME = "medorg-checklist-v33-compact-footer";
+const CACHE_NAME = "medorg-checklist-v34-footer-rebuilt";
 const APP_ASSETS = [
   "./",
   "./index.html",
@@ -48,20 +47,6 @@ self.addEventListener("fetch", function(event) {
           });
         })
         .catch(function() { return caches.match("./index.html"); })
-    );
-    return;
-  }
-
-  if (url.pathname.endsWith("/manifest.webmanifest")) {
-    event.respondWith(
-      fetch(request)
-        .then(function(response) {
-          return caches.open(CACHE_NAME).then(function(cache) {
-            cache.put(request, response.clone());
-            return response;
-          });
-        })
-        .catch(function() { return caches.match(request); })
     );
     return;
   }

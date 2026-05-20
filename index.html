@@ -60,56 +60,105 @@ header nav{display:none!important}
 @media(max-width:520px){.methodGrid{grid-template-columns:1fr}.methodCard{padding:11px}.methodCard .methodTop{align-items:flex-start}.methodCard .methodTitle{font-size:15px}.methodCard .methodWeight{font-size:12px}}
 @media(print){.methodGrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.methodCard{box-shadow:none;page-break-inside:avoid}.methodCard .methodNote{font-size:9pt}}
 
-/* v33 compact collapsible footer */
-body.footer-collapsed { padding-bottom: 54px; }
-body.footer-expanded { padding-bottom: 132px; }
+/* v34 rebuilt compact bottom panel */
+body { padding-bottom: 58px !important; }
+body.bottom-expanded { padding-bottom: 118px !important; }
 
-.footerbar {
-  padding: 6px max(10px, env(safe-area-inset-left)) calc(6px + env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-right)) !important;
-}
-.footerbar .inner {
-  max-width: 1120px;
-  margin: 0 auto;
-  display: grid !important;
-  grid-template-columns: 1fr auto;
+.bottom-mini {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 80;
+  display: grid;
+  grid-template-columns: 34px 1fr 34px;
   gap: 6px;
-  align-items: center !important;
+  align-items: center;
+  background: rgba(255,255,255,.97);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid #dbe4ef;
+  padding: 6px max(8px, env(safe-area-inset-left)) calc(6px + env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-right));
+  box-shadow: 0 -6px 20px rgba(15,23,42,.08);
 }
-.footerbar .summary {
-  font-size: 12px !important;
-  line-height: 1.18 !important;
-  font-weight: 800 !important;
-  max-height: 32px;
+
+.bottom-toggle,
+.bottom-recalc {
+  width: 34px !important;
+  min-width: 34px !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 0 !important;
+  border-radius: 999px !important;
+  border: 1px solid #cbd5e1 !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+  font-size: 15px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+}
+
+.bottom-recalc {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #2563eb !important;
+}
+
+.bottom-main {
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1.15;
+  font-weight: 850;
+  color: #0f172a;
   overflow: hidden;
 }
-.footerbar .summary .footer-short { display: inline; }
-.footerbar .summary .footer-details { display: none; }
-.footerbar.expanded .summary { max-height: none; }
-.footerbar.expanded .summary .footer-short { display: block; margin-bottom: 4px; }
-.footerbar.expanded .summary .footer-details { display: block; font-weight: 700; color: #475569; }
-.footerbar .footer-actions { display: flex; gap: 6px; align-items: center; }
-.footerbar button {
-  min-height: 34px !important;
-  padding: 6px 9px !important;
-  font-size: 12px !important;
-  line-height: 1.1 !important;
-  border-radius: 999px !important;
+
+#bottomMainText {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-#footerToggle {
-  min-width: 34px !important;
-  width: 34px !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
+
+#bottomMoreText {
+  display: none;
+  margin-top: 4px;
+  color: #475569;
+  font-weight: 750;
+  white-space: normal;
 }
-@media (max-width: 420px) {
-  .footerbar .summary { font-size: 11.5px !important; }
-  .footerbar .footer-actions button:not(#footerToggle) { display: none; }
-  .footerbar.expanded .footer-actions button:not(#footerToggle) { display: inline-flex; }
-  body.footer-expanded { padding-bottom: 150px; }
+
+.bottom-mini.expanded #bottomMoreText {
+  display: block;
 }
+
+.bottom-mini.expanded #bottomMainText {
+  white-space: normal;
+  overflow: visible;
+}
+
+@media (max-width: 360px) {
+  .bottom-mini {
+    grid-template-columns: 30px 1fr 30px;
+    gap: 5px;
+    padding-left: max(6px, env(safe-area-inset-left));
+    padding-right: max(6px, env(safe-area-inset-right));
+  }
+  .bottom-toggle,
+  .bottom-recalc {
+    width: 30px !important;
+    min-width: 30px !important;
+    height: 30px !important;
+    min-height: 30px !important;
+    font-size: 13px !important;
+  }
+  .bottom-main {
+    font-size: 11px;
+  }
+}
+
 @media print {
-  .footerbar { display: none !important; }
-  body.footer-collapsed, body.footer-expanded { padding-bottom: 0 !important; }
+  .bottom-mini { display: none !important; }
+  body, body.bottom-expanded { padding-bottom: 0 !important; }
 }
 
 </style>
@@ -122,21 +171,18 @@ body.footer-expanded { padding-bottom: 132px; }
 <section id="reports" class="view hidden"><div class="section no-print"><h2>Отчёты и выгрузки</h2><div class="btnbar"><button onclick="buildBuildingReport(true)">Отчёт по зданию</button><button onclick="buildFacilityReport(true)" class="ok">Сводный отчёт</button><button onclick="buildAllReports(true)" class="secondary">Скачать архив отчётов</button><button onclick="printCurrentReport()" class="secondary">PDF / печать</button><button onclick="downloadCSV()" class="light">CSV</button><button onclick="downloadJSON()" class="light">JSON</button></div><p class="muted">Для PDF: нажмите «PDF / печать» → выберите «Сохранить как PDF» или «Поделиться».</p></div><section id="report" class="report"></section></section>
 <section id="method" class="view hidden"></section>
 </main>
-<div class="footerbar no-print collapsed" id="footerBar">
-  <div class="inner">
-    <div class="summary" id="bottomSummary">
-      <span class="footer-short">Индекс: — · Статус: —</span>
-      <span class="footer-details">Полнота: — · Критические признаки: —</span>
-    </div>
-    <div class="footer-actions">
-      <button class="btn small" id="footerToggle" type="button" onclick="toggleFooter()" aria-label="Свернуть или раскрыть нижнюю панель">⌃</button>
-      <button class="btn primary small" type="button" onclick="recalcAndRender()">Пересчитать</button>
-    </div>
-  </div>
-</div>
 <div class="sticky no-print"><div class="sticky-inner"><div><div id="stickyLine" class="small">Заполнено 0 % · Индекс — · Статус — · Критические признаки 0</div><div id="stickyIndex" class="sticky-num">—</div></div><button onclick="goFirstMissing()" class="light">К незаполненному</button></div></div>
+
+<div class="bottom-mini no-print" id="bottomMini">
+  <button class="bottom-toggle" id="bottomToggle" type="button" onclick="toggleBottomPanel()" aria-label="Раскрыть или свернуть нижнюю панель">⌃</button>
+  <div class="bottom-main" id="bottomSummary">
+    <span id="bottomMainText">Индекс: — · Статус: —</span>
+    <span id="bottomMoreText">Полнота: — · Критические признаки: —</span>
+  </div>
+  <button class="bottom-recalc" type="button" onclick="recalcAndRender()">↻</button>
+</div>
+
 <script>
-const VERSION = "v33-compact-footer";
 (function(){
 'use strict';
 var STORAGE_KEY='medorgChecklistV27FullApp';
@@ -246,50 +292,47 @@ function init(){renderAll();showView('dashboard');setInterval(function(){updateS
 window.addEventListener('DOMContentLoaded',init);window.addEventListener('error',function(e){var st=byId('scriptStatus');if(st){st.className='status bad';st.textContent='Ошибка скрипта: '+(e.message||e);}});
 })();
 
-/* v33 footer compact/collapse logic */
-function toggleFooter(){
-  const bar = document.getElementById("footerBar");
-  const btn = document.getElementById("footerToggle");
-  if(!bar) return;
-  const expanded = !bar.classList.contains("expanded");
-  bar.classList.toggle("expanded", expanded);
-  bar.classList.toggle("collapsed", !expanded);
-  document.body.classList.toggle("footer-expanded", expanded);
-  document.body.classList.toggle("footer-collapsed", !expanded);
+/* v34 rebuilt bottom panel logic */
+function toggleBottomPanel(){
+  const panel = document.getElementById("bottomMini");
+  const btn = document.getElementById("bottomToggle");
+  if(!panel) return;
+  const expanded = !panel.classList.contains("expanded");
+  panel.classList.toggle("expanded", expanded);
+  document.body.classList.toggle("bottom-expanded", expanded);
   if(btn) btn.textContent = expanded ? "⌄" : "⌃";
 }
-function setCompactFooterText(shortText, detailText){
-  const el = document.getElementById("bottomSummary");
-  if(!el) return;
-  el.innerHTML = '<span class="footer-short">' + escapeHtmlSafe(shortText) + '</span><span class="footer-details">' + escapeHtmlSafe(detailText) + '</span>';
+
+function updateBottomMiniFromKpi(){
+  try {
+    const idxEl = document.getElementById("kpiIndex");
+    const statusEl = document.getElementById("kpiStatus");
+    const compEl = document.getElementById("kpiCompleteness") || document.getElementById("kpiComplete");
+    const riskEl = document.getElementById("kpiRisk");
+
+    const idx = idxEl ? (idxEl.textContent || "—").trim() : "—";
+    const status = statusEl ? (statusEl.textContent || "—").trim() : "—";
+    const comp = compEl ? (compEl.textContent || "—").trim() : "—";
+    const risks = riskEl ? (riskEl.textContent || "—").trim() : "—";
+
+    const main = document.getElementById("bottomMainText");
+    const more = document.getElementById("bottomMoreText");
+    if(main) main.textContent = "Индекс: " + idx + " · " + status;
+    if(more) more.textContent = "Полнота: " + comp + " · Критические признаки: " + risks;
+  } catch(e) {}
 }
-function escapeHtmlSafe(value){
-  return String(value == null ? "" : value).replace(/[&<>"']/g, function(m){
-    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m];
-  });
-}
+
 (function(){
-  const oldRecalc = typeof recalcAndRender === "function" ? recalcAndRender : null;
-  if(oldRecalc){
+  const originalRecalc = typeof recalcAndRender === "function" ? recalcAndRender : null;
+  if(originalRecalc){
     recalcAndRender = function(){
-      oldRecalc();
-      try{
-        let idx = "—", status = "—", comp = "—", risks = "—";
-        const kIdx = document.getElementById("kpiIndex");
-        const kStatus = document.getElementById("kpiStatus");
-        const kComp = document.getElementById("kpiCompleteness") || document.getElementById("kpiComplete");
-        const kRisk = document.getElementById("kpiRisk");
-        if(kIdx) idx = kIdx.textContent.trim() || "—";
-        if(kStatus) status = kStatus.textContent.trim() || "—";
-        if(kComp) comp = kComp.textContent.trim() || "—";
-        if(kRisk) risks = kRisk.textContent.trim() || "—";
-        setCompactFooterText("Индекс: " + idx + " · " + status, "Полнота: " + comp + " · Критические признаки: " + risks);
-      }catch(e){}
+      originalRecalc();
+      updateBottomMiniFromKpi();
     };
   }
   window.addEventListener("DOMContentLoaded", function(){
-    document.body.classList.add("footer-collapsed");
-    setTimeout(function(){ if(typeof recalcAndRender === "function") recalcAndRender(); }, 150);
+    setTimeout(updateBottomMiniFromKpi, 200);
+    setInterval(updateBottomMiniFromKpi, 1000);
   });
 })();
 
