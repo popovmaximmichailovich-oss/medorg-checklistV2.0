@@ -266,8 +266,183 @@ body > button[onclick="goFirstMissing()"].light {
   display: none !important;
 }
 
+
+/* v38 stable footer: no status flicker */
+.bottom-mini {
+  grid-template-columns: 30px 1fr 30px !important;
+  gap: 6px !important;
+  min-height: 42px !important;
+}
+
+.bottom-main {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 1px !important;
+  min-width: 0 !important;
+  font-size: 11.5px !important;
+  line-height: 1.12 !important;
+  font-weight: 800 !important;
+}
+
+#bottomIndexText,
+#bottomStatusText,
+#bottomMoreText {
+  display: block !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+#bottomStatusText {
+  color: #0f172a !important;
+}
+
+#bottomMoreText {
+  display: none !important;
+  color: #475569 !important;
+  font-weight: 750 !important;
+  margin-top: 2px !important;
+}
+
+.bottom-mini.expanded #bottomMoreText {
+  display: block !important;
+}
+
+.bottom-mini.expanded #bottomIndexText,
+.bottom-mini.expanded #bottomStatusText,
+.bottom-mini.expanded #bottomMoreText {
+  white-space: normal !important;
+  overflow: visible !important;
+}
+
+.bottom-toggle,
+.bottom-recalc {
+  width: 30px !important;
+  min-width: 30px !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  font-size: 13px !important;
+}
+
+body {
+  padding-bottom: 54px !important;
+}
+body.bottom-expanded {
+  padding-bottom: 112px !important;
+}
+
+@media(max-width:360px){
+  .bottom-main {
+    font-size: 10.8px !important;
+  }
+  .bottom-mini {
+    grid-template-columns: 28px 1fr 28px !important;
+  }
+  .bottom-toggle,
+  .bottom-recalc {
+    width: 28px !important;
+    min-width: 28px !important;
+    height: 28px !important;
+    min-height: 28px !important;
+  }
+}
+
+
+/* v39 bottom navigation: Назад / Далее / Вверх */
+.bottom-mini {
+  grid-template-columns: 32px 1fr auto !important;
+  gap: 6px !important;
+  min-height: 44px !important;
+}
+
+.bottom-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.bottom-nav {
+  width: 32px !important;
+  min-width: 32px !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  padding: 0 !important;
+  border-radius: 999px !important;
+  border: 1px solid #cbd5e1 !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+  font-size: 18px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+}
+
+.bottom-nav.primary-mini {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #2563eb !important;
+}
+
+.bottom-nav:disabled {
+  opacity: .38 !important;
+  background: #f1f5f9 !important;
+  color: #64748b !important;
+}
+
+.bottom-main {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 1px !important;
+  min-width: 0 !important;
+  font-size: 11.2px !important;
+  line-height: 1.12 !important;
+  font-weight: 800 !important;
+}
+
+#bottomIndexText,
+#bottomStatusText,
+#bottomMoreText {
+  display: block !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+#bottomMoreText {
+  display: none !important;
+}
+
+.bottom-mini.expanded #bottomMoreText {
+  display: block !important;
+}
+
+body {
+  padding-bottom: 56px !important;
+}
+
+@media(max-width:360px){
+  .bottom-mini {
+    grid-template-columns: 30px 1fr auto !important;
+    gap: 5px !important;
+  }
+  .bottom-nav {
+    width: 29px !important;
+    min-width: 29px !important;
+    height: 29px !important;
+    min-height: 29px !important;
+    font-size: 16px !important;
+  }
+  .bottom-actions {
+    gap: 4px;
+  }
+  .bottom-main {
+    font-size: 10.5px !important;
+  }
+}
+
 </style>
-<meta name="app-version" content="v37-bugfix-footer-clean">
+<meta name="app-version" content="v39-bottom-navigation">
 </head>
 <body>
 <header class="no-print"><div class="wrap"><div class="topbar"><h1>Чек-лист визуальной самооценки износа здания медицинской организации</h1><select id="menuSelect" class="menuSelect" onchange="showView(this.value)"><option value="dashboard">Учреждения</option><option value="inspect">Осмотр</option><option value="reports">Отчёты</option><option value="method">Методика</option></select></div></div></header>
@@ -278,19 +453,22 @@ body > button[onclick="goFirstMissing()"].light {
 <section id="method" class="view hidden"></section>
 </main>
 <div class="bottom-mini no-print" id="bottomMini">
-  <button class="bottom-toggle" id="bottomToggle" type="button" onclick="toggleBottomPanel()" aria-label="Раскрыть или свернуть нижнюю панель">⌃</button>
+  <button class="bottom-nav" id="bottomBack" type="button" onclick="goPrevSection()" aria-label="Назад">‹</button>
   <div class="bottom-main" id="bottomSummary">
-    <span id="bottomMainText">Индекс: — · Статус: —</span>
+    <span id="bottomIndexText">Индекс: —</span>
+    <span id="bottomStatusText">Статус: —</span>
     <span id="bottomMoreText">Заполнено: — · Критические признаки: —</span>
   </div>
-  <button class="bottom-recalc" type="button" onclick="recalcAndRender()">↻</button>
+  <div class="bottom-actions">
+    <button class="bottom-nav" id="bottomTop" type="button" onclick="scrollCurrentTop()" aria-label="Вверх">↑</button>
+    <button class="bottom-nav primary-mini" id="bottomNext" type="button" onclick="goNextSection()" aria-label="Далее">›</button>
+  </div>
 </div>
-
 <script>
 (function(){
 'use strict';
-var STORAGE_KEY='medorgChecklistV37BugfixFooterClean';
-var VERSION='v37-bugfix-footer-clean';
+var STORAGE_KEY='medorgChecklistV39BottomNavigation';
+var VERSION='v39-bottom-navigation';
 function uid(){return 'id_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);}
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function qsa(sel,root){return Array.prototype.slice.call((root||document).querySelectorAll(sel));}
@@ -402,7 +580,8 @@ function init(){renderAll();showView('dashboard');setInterval(function(){updateS
 window.addEventListener('DOMContentLoaded',init);window.addEventListener('error',function(e){var st=byId('scriptStatus');if(st){st.className='status bad';st.textContent='Ошибка скрипта: '+(e.message||e);}});
 })();
 
-/* v34 rebuilt bottom panel logic */
+
+/* v38 stable bottom panel logic */
 function toggleBottomPanel(){
   const panel = document.getElementById("bottomMini");
   const btn = document.getElementById("bottomToggle");
@@ -413,39 +592,158 @@ function toggleBottomPanel(){
   if(btn) btn.textContent = expanded ? "⌄" : "⌃";
 }
 
-function updateBottomMiniFromKpi(){
-  try {
-    const idxEl = document.getElementById("kpiIndex");
-    const statusEl = document.getElementById("kpiStatus");
-    const compEl = document.getElementById("kpiCompleteness") || document.getElementById("kpiComplete");
-    const riskEl = document.getElementById("kpiRisk");
+function updateBottomPanelStable(){
+  try{
+    let indexText = "—";
+    let statusText = "—";
+    let completeText = "—";
+    let redText = "—";
 
-    const idx = idxEl ? (idxEl.textContent || "—").trim() : "—";
-    const status = statusEl ? (statusEl.textContent || "—").trim() : "—";
-    const comp = compEl ? (compEl.textContent || "—").trim() : "—";
-    const risks = riskEl ? (riskEl.textContent || "—").trim() : "—";
+    if(typeof building === "function" && typeof summary === "function"){
+      const s = summary(building());
+      if(s){
+        indexText = s.indexText || "—";
+        statusText = s.status || "—";
+        completeText = (s.complete !== undefined && s.complete !== null) ? (s.complete + " %") : (s.completeness !== undefined ? (s.completeness + " %") : "—");
+        redText = (s.red !== undefined && s.red !== null) ? String(s.red) : (s.risks !== undefined ? String(s.risks) : "—");
+      }
+    } else {
+      const kIdx = document.getElementById("kpiIndex");
+      const kStatus = document.getElementById("kpiStatus");
+      const kComp = document.getElementById("kpiCompleteness") || document.getElementById("kpiComplete");
+      const kRisk = document.getElementById("kpiRisk");
+      indexText = kIdx ? (kIdx.textContent || "—").trim() : "—";
+      statusText = kStatus ? (kStatus.textContent || "—").trim() : "—";
+      completeText = kComp ? (kComp.textContent || "—").trim() : "—";
+      redText = kRisk ? (kRisk.textContent || "—").trim() : "—";
+    }
 
-    const main = document.getElementById("bottomMainText");
+    const idx = document.getElementById("bottomIndexText");
+    const status = document.getElementById("bottomStatusText");
     const more = document.getElementById("bottomMoreText");
-    if(main) main.textContent = "Индекс: " + idx + " · " + status;
-    if(more) more.textContent = "Полнота: " + comp + " · Критические признаки: " + risks;
-  } catch(e) {}
+
+    if(idx) idx.textContent = "Индекс: " + indexText;
+    if(status) status.textContent = "Статус: " + statusText;
+    if(more) more.textContent = "Заполнено: " + completeText + " · Критические признаки: " + redText;
+  }catch(e){}
 }
 
 (function(){
+  const originalUpdateSticky = typeof updateSticky === "function" ? updateSticky : null;
+  updateSticky = function(){
+    if(originalUpdateSticky){
+      try{ originalUpdateSticky(); }catch(e){}
+    }
+    updateBottomPanelStable();
+  };
+
   const originalRecalc = typeof recalcAndRender === "function" ? recalcAndRender : null;
   if(originalRecalc){
     recalcAndRender = function(){
       originalRecalc();
-      updateBottomMiniFromKpi();
+      updateBottomPanelStable();
     };
   }
+
   window.addEventListener("DOMContentLoaded", function(){
-    setTimeout(updateBottomMiniFromKpi, 200);
-    setInterval(updateBottomMiniFromKpi, 1000);
+    document.body.classList.remove("bottom-expanded");
+    setTimeout(updateBottomPanelStable, 150);
+    setTimeout(updateBottomPanelStable, 700);
   });
 })();
 
+
+/* v39 section navigation */
+const NAV_SECTION_TITLES = [
+  "Паспорт здания",
+  "Критические признаки риска",
+  "Конструкции",
+  "Инженерные системы",
+  "Медицинская специфика",
+  "Фото и комментарии",
+  "Предварительный вывод",
+  "Отчёт"
+];
+
+function getVisibleSections(){
+  const candidates = Array.from(document.querySelectorAll("section, .card, .panel, .block, article, div"));
+  const sections = [];
+  NAV_SECTION_TITLES.forEach(function(title){
+    let found = null;
+    for(const el of candidates){
+      if(found) break;
+      const h = el.querySelector && el.querySelector("h1,h2,h3");
+      const text = h ? (h.textContent || "").trim() : "";
+      if(text.indexOf(title) !== -1 && el.offsetParent !== null){
+        found = el;
+      }
+    }
+    if(found && !sections.includes(found)) sections.push(found);
+  });
+
+  if(!sections.length){
+    // fallback: all visible cards with headings
+    document.querySelectorAll(".card").forEach(function(el){
+      const h = el.querySelector("h2,h3");
+      if(h && el.offsetParent !== null) sections.push(el);
+    });
+  }
+  return sections;
+}
+
+function currentSectionIndex(){
+  const sections = getVisibleSections();
+  if(!sections.length) return -1;
+  const y = window.scrollY + 120;
+  let idx = 0;
+  sections.forEach(function(sec, i){
+    if(sec.getBoundingClientRect().top + window.scrollY <= y) idx = i;
+  });
+  return idx;
+}
+
+function scrollToSectionByDelta(delta){
+  const sections = getVisibleSections();
+  if(!sections.length) return;
+  let idx = currentSectionIndex();
+  if(idx < 0) idx = 0;
+  let next = Math.max(0, Math.min(sections.length - 1, idx + delta));
+  // if moving next but still within same section near bottom, force next
+  if(delta > 0 && next === idx && idx < sections.length - 1) next = idx + 1;
+  sections[next].scrollIntoView({behavior:"smooth", block:"start"});
+  setTimeout(updateNavButtons, 250);
+}
+
+function goNextSection(){ scrollToSectionByDelta(1); }
+function goPrevSection(){ scrollToSectionByDelta(-1); }
+
+function scrollCurrentTop(){
+  const sections = getVisibleSections();
+  const idx = currentSectionIndex();
+  if(sections.length && idx >= 0){
+    sections[idx].scrollIntoView({behavior:"smooth", block:"start"});
+  } else {
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+}
+
+function updateNavButtons(){
+  const sections = getVisibleSections();
+  const idx = currentSectionIndex();
+  const back = document.getElementById("bottomBack");
+  const next = document.getElementById("bottomNext");
+  if(back) back.disabled = !sections.length || idx <= 0;
+  if(next) next.disabled = !sections.length || idx >= sections.length - 1;
+}
+
+(function(){
+  window.addEventListener("scroll", function(){ window.requestAnimationFrame(updateNavButtons); }, {passive:true});
+  window.addEventListener("resize", updateNavButtons);
+  window.addEventListener("DOMContentLoaded", function(){
+    setTimeout(updateNavButtons, 300);
+    setInterval(updateNavButtons, 1200);
+  });
+})();
 
 </script>
 </body>
