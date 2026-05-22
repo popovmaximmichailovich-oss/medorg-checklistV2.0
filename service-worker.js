@@ -1,7 +1,7 @@
 /* service-worker.js
-   Версия кэша: v44-root-icons
+   Версия кэша: v45-stable-rollback
 */
-const CACHE_NAME = "medorg-checklist-v44-root-icons";
+const CACHE_NAME = "medorg-checklist-v45-stable-rollback";
 const APP_ASSETS = [
   "./",
   "./index.html",
