@@ -1,7 +1,7 @@
 /* service-worker.js
-   Версия кэша: v45-stable-rollback
+   Версия кэша: v47-service-life-safe
 */
-const CACHE_NAME = "medorg-checklist-v45-stable-rollback";
+const CACHE_NAME = "medorg-checklist-v47-service-life-safe";
 const APP_ASSETS = [
   "./",
   "./index.html",
