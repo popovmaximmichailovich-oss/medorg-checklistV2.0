@@ -1,13 +1,13 @@
 /* service-worker.js
-   Версия кэша: v42-clean-header
+   Версия кэша: v44-root-icons
 */
-const CACHE_NAME = "medorg-checklist-v42-clean-header";
+const CACHE_NAME = "medorg-checklist-v44-root-icons";
 const APP_ASSETS = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png"
+  "./icon-192.png",
+  "./icon-512.png"
 ];
 
 self.addEventListener("install", function(event) {
